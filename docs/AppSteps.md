@@ -4,7 +4,7 @@
 - [ ] Create `settings.gradle.kts` (project name, module include)
 - [ ] Create root `build.gradle.kts` (plugin declarations)
 - [ ] Create `gradle/libs.versions.toml` (all dependency versions)
-- [ ] Create `composeApp/build.gradle.kts` (KMP targets, dependencies, SQLDelight config)
+- [ ] Create `composeApp/build.gradle.kts` (KMP targets, dependencies, SQLDelight config, BuildConfig fields for GitHub PAT/owner/repo)
 - [ ] Verify Android + iOS targets resolve without errors
 
 ## Phase 2 — SQLDelight Schema
@@ -20,7 +20,12 @@
 - [ ] Create `DatabaseDriverFactory` (`expect/actual` — `AndroidSqliteDriver` / `NativeSqliteDriver`)
 - [ ] Create `CardRepository` (search, filter by color bitmask, filter by rarity, get by variant_id, get variants by base_id)
 - [ ] Create `CollectionRepository` (add, remove, update quantity, get all owned, get quantity for variant)
-- [ ] Create `JsonSeeder` — reads bundled JSON on first launch, normalizes rarity and color, inserts via `INSERT OR IGNORE`
+- [ ] Create `CardDataUpdater`:
+  - [ ] Fetch `version.json` from private GitHub repo via GitHub Contents API (PAT from `BuildConfig`)
+  - [ ] Compare remote version with locally stored version (DataStore)
+  - [ ] If newer (or first launch): fetch `cards.json`, normalize rarity and color, wipe + re-seed cards table via `INSERT OR IGNORE`
+  - [ ] Persist new version string to DataStore
+- [ ] Set up DataStore (`Preferences`) for storing current card data version
 
 ## Phase 4 — Scanner Pipeline
 - [ ] Create `expect/actual` `CameraController` interface
@@ -35,7 +40,7 @@
 - [ ] Create `FuzzyMatcher` — pure Kotlin Levenshtein distance against all `base_id` values
 
 ## Phase 5 — DI (Koin)
-- [ ] Create shared Koin module (repositories, ViewModels, FuzzyMatcher)
+- [ ] Create shared Koin module (repositories, ViewModels, FuzzyMatcher, CardDataUpdater)
 - [ ] Create Android Koin module (DB driver, OcrEngine, CameraController)
 - [ ] Create iOS Koin module (DB driver, OcrEngine, CameraController)
 
@@ -51,10 +56,11 @@
 - [ ] Create `ScannerScreen` — camera preview, ROI overlay, horizontal variant image strip, "No match" message, link to browser
 - [ ] Create bottom navigation (Browser, Collection, Scanner)
 - [ ] Wire navigation graph
+- [ ] Add "Update Cards" button/flow (triggers `CardDataUpdater`, shows progress + result toast)
 
 ## Phase 8 — Platform Glue
-- [ ] Android: `MainActivity.kt` (start Koin, set content)
-- [ ] Android: `AndroidManifest.xml` (camera permission, app metadata)
+- [ ] Android: `MainActivity.kt` (start Koin, trigger `CardDataUpdater` on first launch, set content)
+- [ ] Android: `AndroidManifest.xml` (camera permission, internet permission, app metadata)
 - [ ] iOS: `MainViewController.kt` (entry point for SwiftUI host)
 - [ ] iOS: `Info.plist` (camera usage description string)
 - [ ] iOS: `iOSApp.swift` (SwiftUI app entry, init Koin)
