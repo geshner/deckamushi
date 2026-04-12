@@ -1,0 +1,67 @@
+# -----------------------------------------------
+# Gradle
+# -----------------------------------------------
+.gradle/
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# -----------------------------------------------
+# Android
+# -----------------------------------------------
+*.iml
+local.properties
+*.apk
+*.aab
+*.ap_
+*.keystore
+*.jks
+captures/
+.externalNativeBuild/
+.cxx/
+
+# -----------------------------------------------
+# Kotlin / IDE
+# -----------------------------------------------
+.kotlin/
+.idea/
+*.orig
+
+# -----------------------------------------------
+# iOS / Xcode
+# -----------------------------------------------
+xcuserdata/
+**/*.xcuserdata/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
+*.ipa
+*.dSYM.zip
+*.dSYM
+DerivedData/
+Pods/
+
+# -----------------------------------------------
+# macOS
+# -----------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# -----------------------------------------------
+# Windows
+# -----------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# -----------------------------------------------
+# Misc
+# -----------------------------------------------
+node_modules/
+*.log

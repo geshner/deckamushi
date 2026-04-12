@@ -1,0 +1,23 @@
+# Normalize line endings to LF in the repo, checkout as-is on each platform
+* text=auto eol=lf
+
+# Force LF for shell scripts (must stay LF even on Windows)
+gradlew text eol=lf
+
+# Force CRLF for Windows batch files
+*.bat text eol=crlf
+
+# Binary files — no line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.zip binary
+*.apk binary
+*.aab binary
+*.ipa binary
+*.xcf binary
+*.traineddata binary
+
