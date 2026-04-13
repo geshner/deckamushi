@@ -1,0 +1,59 @@
+CREATE TABLE cards (
+    id TEXT NOT NULL PRIMARY KEY,   -- unique identifier for each card
+    base_id TEXT NOT NULL,          -- base_id is used to group different versions of the same card
+    variant TEXT,                   -- variant is used to distinguish different versions of the same card
+    name TEXT NOT NULL,
+    color_flags INTEGER NOT NULL,   -- color_flags is a bitmask representing the colors of the card
+    rarity_id INTEGER NOT NULL,
+    card_category TEXT NOT NULL,
+    cost INTEGER,
+    attack_power INTEGER,
+    counter_power INTEGER,
+    life INTEGER,
+    combat_attribute TEXT,
+    feature TEXT,
+    card_text TEXT,
+    block_icon_code TEXT,
+    pack_name TEXT,
+    image_url TEXT
+);
+
+insertCard:
+INSERT OR REPLACE INTO cards(
+  id,
+  base_id,
+  variant,
+  name,
+  color_flags,
+  rarity_id,
+  card_category,
+  cost,
+  attack_power,
+  counter_power,
+  life,
+  combat_attribute,
+  feature,
+  card_text,
+  block_icon_code,
+  pack_name,
+  image_url
+) VALUES (
+  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+);
+
+getCardById:
+SELECT * FROM cards
+WHERE id = ?;
+
+getAllCardsWithOwnership:
+SELECT
+  c.*,
+  COALESCE(col.quantity, 0) AS owned_quantity,
+  CASE
+    WHEN COALESCE(col.quantity, 0) > 0 THEN 1
+    ELSE 0
+  END AS is_owned
+FROM cards c
+LEFT JOIN collection col
+  ON col.card_id = c.id
+ORDER BY c.base_id, c.variant;

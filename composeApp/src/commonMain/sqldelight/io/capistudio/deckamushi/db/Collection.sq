@@ -1,0 +1,34 @@
+CREATE TABLE collection (
+    card_id TEXT NOT NULL PRIMARY KEY,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE,
+    CHECK (quantity >= 1)
+);
+
+deleteCollectionEntry:
+DELETE FROM collection
+WHERE card_id = ?;
+
+getQuantityByCardId:
+SELECT quantity
+FROM collection
+WHERE card_id = ?;
+
+getAllOwned:
+SELECT *
+FROM collection
+ORDER BY card_id;
+
+incrementQuantity:
+INSERT OR REPLACE INTO collection(card_id, quantity)
+VALUES (
+  ?,
+  COALESCE((SELECT quantity FROM collection WHERE card_id = ?), 0) + 1
+);
+
+decrementQuantity:
+UPDATE collection
+SET quantity = quantity - 1
+WHERE card_id = ?
+  AND quantity > 1;
+
