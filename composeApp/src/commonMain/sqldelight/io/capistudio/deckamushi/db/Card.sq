@@ -6,7 +6,6 @@ CREATE TABLE cards (
     color_flags INTEGER NOT NULL,   -- color_flags is a bitmask representing the colors of the card
     rarity_id INTEGER NOT NULL,
     card_category TEXT NOT NULL,
-    cost INTEGER,
     attack_power INTEGER,
     counter_power INTEGER,
     life INTEGER,
@@ -27,7 +26,6 @@ INSERT OR REPLACE INTO cards(
   color_flags,
   rarity_id,
   card_category,
-  cost,
   attack_power,
   counter_power,
   life,
@@ -38,7 +36,7 @@ INSERT OR REPLACE INTO cards(
   pack_name,
   image_url
 ) VALUES (
-  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
 
 getCardById:
