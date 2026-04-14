@@ -1,25 +1,8 @@
 package io.capistudio.deckamushi
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            App()
-        }
-    }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
-}
+// Intentionally empty.
+//
+// The Android entry Activity for this project lives in the :androidApp module:
+//   androidApp/src/main/kotlin/io/capistudio/deckamushi/MainActivity.kt
+//
+// Keeping an Activity in :shared causes duplicate classes/dex merge conflicts.
