@@ -27,6 +27,7 @@ ktor = "3.4.2"
 kotlinx-coroutines = "1.10.2"
 serialization = "1.11.0"
 buildkonfig = "0.18.0"
+kermit = "2.1.0"
 
 [libraries]
 # Kotlin / Coroutines / Serialization
@@ -79,6 +80,9 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+
+# Kermit
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

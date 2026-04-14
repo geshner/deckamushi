@@ -59,6 +59,9 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
+
+            //Logging
+            implementation(libs.kermit)
         }
 
         androidMain.dependencies {
@@ -67,6 +70,7 @@ kotlin {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.androidx.datastore.preferences)
         }
 
         iosMain.dependencies {
@@ -103,11 +107,11 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(
             FieldSpec.Type.STRING,
-            "API_KEY", "\"${localProperties.getProperty("GITHUB_PAT")}\""
+            "API_KEY", localProperties.getProperty("GITHUB_PAT")
         )
         buildConfigField(
             FieldSpec.Type.STRING,
-            "BASE_URL", "\"$finalBaseUrl\""
+            "BASE_URL", finalBaseUrl
         )
     }
 }
