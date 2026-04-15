@@ -1,6 +1,7 @@
 package io.capistudio.deckamushi.data.remote
 
 import io.capistudio.deckamushi.BuildKonfig
+import io.capistudio.deckamushi.data.remote.dto.CardDto
 import io.capistudio.deckamushi.data.remote.dto.VersionDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -49,6 +50,28 @@ class DeckamushiDataApi(
             }
         } catch (e: Exception) {
             RemoteResult.NetworkError("fetchVersion failed: ${e.message}")
+        }
+    }
+
+    suspend fun fetchCards(): RemoteResult<List<CardDto>> {
+        val path = "cards.json"
+        return try {
+            val response = githubGet(path)
+
+            when (response.status) {
+                HttpStatusCode.OK -> RemoteResult.Success(
+                    data = response.body()
+                )
+                else -> {
+                    val errorBody = runCatching { response.bodyAsText() }.getOrNull()
+                    RemoteResult.HttpError(
+                        code = response.status.value,
+                        message = "fetchCards failed with HTTP ${response.status}${if (errorBody != null) ": $errorBody" else ""}",
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            RemoteResult.NetworkError("fetchCards failed: ${e.message}")
         }
     }
 }

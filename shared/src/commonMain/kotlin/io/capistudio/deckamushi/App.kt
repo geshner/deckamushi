@@ -19,16 +19,73 @@ import io.capistudio.deckamushi.data.local.VersionCache
 import io.capistudio.deckamushi.data.local.VersionCacheFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.data.remote.RemoteResult
+import io.capistudio.deckamushi.di.AppDependencies
 import kotlinx.coroutines.launch
 
 
 @Composable
-@Preview
 fun App(
-    versionCacheFactory: VersionCacheFactory? = null
+    deps: AppDependencies? = null
 ) {
     MaterialTheme {
-        VersionFetchLessonScreen(versionCacheFactory)
+        DebugSyncScreen(deps)
+    }
+}
+
+@Composable
+private fun DebugSyncScreen(
+    deps: AppDependencies?
+) {
+    val scope = rememberCoroutineScope()
+    var status by remember { mutableStateOf("Idle") }
+    var lastSeededVersion by remember { mutableStateOf<String?>(null)}
+    var lastSeededCount by remember { mutableStateOf<Int?>(null) }
+
+    Column(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .safeContentPadding()
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text("cards.json → seed DB")
+        Spacer(Modifier.height(12.dp))
+
+        Text("Status: $status")
+        Text("Last seeded version: ${lastSeededVersion ?: "<none>"}")
+        Text("Rows written: ${lastSeededCount?.toString() ?: "<none>"}")
+
+        Spacer(Modifier.height(12.dp))
+
+        Button(
+            enabled = deps != null && status != "Working...",
+            onClick = {
+                scope.launch {
+                    val useCase = deps?.updateCardDataUseCase
+                    if (useCase == null) {
+                        status = "Deps not provided"
+                        return@launch
+                    }
+
+                    status = "Working..."
+                    when (val result = useCase.run()) {
+                        is io.capistudio.deckamushi.domain.UpdateCardDataUseCase.Result.UpToDate -> {
+                            status = "Up to date"
+                        }
+                        is io.capistudio.deckamushi.domain.UpdateCardDataUseCase.Result.Seeded -> {
+                            status = "Seeded OK"
+                            lastSeededVersion = result.cardsVersion
+                            lastSeededCount = result.insertedOrReplaced
+                        }
+                        is io.capistudio.deckamushi.domain.UpdateCardDataUseCase.Result.Error -> {
+                            status = "Error: ${result.message}"
+                        }
+                    }
+                }
+            }
+        ) {
+            Text("Sync / Seed cards")
+        }
     }
 }
 

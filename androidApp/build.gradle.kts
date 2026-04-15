@@ -40,6 +40,9 @@ dependencies {
     // Required for the Android Activity that hosts the shared Compose UI
     implementation(libs.androidx.activity.compose)
 
+    // The shared module's HttpClient uses the OkHttp engine on Android; ensure the app has it on the classpath.
+    implementation(libs.ktor.client.okhttp)
+
     // Needed so Compose Multiplatform resources (composeResources/) are available at runtime on Android
     implementation(libs.compose.components.resources)
 
