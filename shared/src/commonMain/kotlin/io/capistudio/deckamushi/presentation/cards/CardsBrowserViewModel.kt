@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 
 data class CardBrowserState(
@@ -22,6 +23,8 @@ data class CardBrowserState(
     val cards: List<Card> = emptyList(),
     val error: String? = null,
     val query: String = "",
+    val isAppending: Boolean = false,
+    val endReached: Boolean = false,
 )
 
 
@@ -49,7 +52,9 @@ class CardsBrowserViewModel(
     fun loadMore() {
         if (loading || reachedEnd) return
         loading = true
+        _state.update { it.copy(isAppending = true) }
         scope.launch {
+            delay(1000)
             try {
                 val q = _state.value.query.trim()
                 val next = if (q.isBlank()) {
@@ -58,7 +63,10 @@ class CardsBrowserViewModel(
                     searchCardByNameUseCase(q, pageSize, offset)
                 }
                 offset += next.size
-                if (next.isEmpty()) reachedEnd = true
+                if (next.isEmpty()) {
+                    reachedEnd = true
+                    _state.update { it.copy(endReached = true) }
+                }
 
                 _state.update { s ->
                     s.copy(
@@ -70,6 +78,7 @@ class CardsBrowserViewModel(
                 _state.update { it.copy(error = t.message ?: "Unknown error") }
             } finally {
                 loading = false
+                _state.update { it.copy(isAppending = false) }
             }
         }
     }
@@ -88,7 +97,7 @@ class CardsBrowserViewModel(
 
         loading = true
         scope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update { it.copy(isLoading = true, error = null, endReached = false) }
 
             val q = _state.value.query.trim()
             offset = 0
