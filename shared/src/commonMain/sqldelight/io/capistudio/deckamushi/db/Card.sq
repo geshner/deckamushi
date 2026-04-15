@@ -55,3 +55,12 @@ FROM cards c
 LEFT JOIN collection col
   ON col.card_id = c.id
 ORDER BY c.base_id, c.variant;
+
+getCardsPage:
+SELECT *
+FROM cards
+ORDER BY base_id, variant
+LIMIT :limit OFFSET :offset;
+
+getCardsCount:
+SELECT COUNT(*) FROM cards;

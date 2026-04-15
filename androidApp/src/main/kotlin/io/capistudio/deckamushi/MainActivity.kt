@@ -12,7 +12,11 @@ import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.local.db.DatabaseDriverFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.di.AppDependencies
-import io.capistudio.deckamushi.domain.UpdateCardDataUseCase
+import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
+import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
+import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
+import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
+import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +32,9 @@ class MainActivity : ComponentActivity() {
                 val dbProvider = AppDatabaseProvider(DatabaseDriverFactory(this))
                 val api = DeckamushiDataApi(createHttpClient())
                 val useCase = UpdateCardDataUseCase(api, cache, dbProvider)
-                AppDependencies(updateCardDataUseCase = useCase)
+                val repository = CardRepositoryImpl(dbProvider)
+                val viewModel = CardsBrowserViewModel(GetCardsPageUseCase(repository), GetCardsCountUseCase(repository))
+                AppDependencies(updateCardDataUseCase = useCase, viewModel)
             }
             App(deps)
         }

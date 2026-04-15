@@ -20,6 +20,8 @@ import io.capistudio.deckamushi.data.local.VersionCacheFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.data.remote.RemoteResult
 import io.capistudio.deckamushi.di.AppDependencies
+import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
+import io.capistudio.deckamushi.presentation.cards.CardBrowserScreen
 import kotlinx.coroutines.launch
 
 
@@ -28,7 +30,9 @@ fun App(
     deps: AppDependencies? = null
 ) {
     MaterialTheme {
-        DebugSyncScreen(deps)
+        CardBrowserScreen(deps!!.cardsBrowserViewModel)
+
+//        DebugSyncScreen(deps)
     }
 }
 
@@ -69,15 +73,15 @@ private fun DebugSyncScreen(
 
                     status = "Working..."
                     when (val result = useCase.run()) {
-                        is io.capistudio.deckamushi.domain.UpdateCardDataUseCase.Result.UpToDate -> {
+                        is UpdateCardDataUseCase.Result.UpToDate -> {
                             status = "Up to date"
                         }
-                        is io.capistudio.deckamushi.domain.UpdateCardDataUseCase.Result.Seeded -> {
+                        is UpdateCardDataUseCase.Result.Seeded -> {
                             status = "Seeded OK"
                             lastSeededVersion = result.cardsVersion
                             lastSeededCount = result.insertedOrReplaced
                         }
-                        is io.capistudio.deckamushi.domain.UpdateCardDataUseCase.Result.Error -> {
+                        is UpdateCardDataUseCase.Result.Error -> {
                             status = "Error: ${result.message}"
                         }
                     }

@@ -1,9 +1,8 @@
-package io.capistudio.deckamushi.domain
+package io.capistudio.deckamushi.domain.usecase
 
 import io.capistudio.deckamushi.data.local.VersionCache
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.mapper.CardDtoMapper.toDbModel
-import io.capistudio.deckamushi.data.remote.ApiResponse
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.data.remote.RemoteResult
 
