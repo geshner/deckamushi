@@ -64,3 +64,15 @@ LIMIT :limit OFFSET :offset;
 
 getCardsCount:
 SELECT COUNT(*) FROM cards;
+
+searchCardsByName:
+SELECT *
+FROM cards
+WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%'
+ORDER BY base_id, variant
+LIMIT :limit OFFSET :offset;
+
+searchCardsCount:
+SELECT COUNT(*)
+FROM cards
+WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%';

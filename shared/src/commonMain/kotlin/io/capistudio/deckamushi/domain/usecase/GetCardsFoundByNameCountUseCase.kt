@@ -1,0 +1,11 @@
+package io.capistudio.deckamushi.domain.usecase
+
+import io.capistudio.deckamushi.domain.repository.CardRepository
+
+class GetCardsFoundByNameCountUseCase(
+    private val repository: CardRepository
+) {
+
+    suspend operator fun invoke(query: String): Long =
+        repository.searchCardsCount(query)
+}

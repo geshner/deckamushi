@@ -6,6 +6,8 @@ import io.capistudio.deckamushi.domain.model.Card
 interface CardRepository {
     suspend fun getCardsCount(): Long
     suspend fun getCardsPage(limit: Int, offset: Int): List<Card>
+    suspend fun searchCardsCount(query: String): Long
+    suspend fun searchCardsByName(query: String, limit: Int, offset: Int): List<Card>
 }
 
 class CardRepositoryImpl(
@@ -23,6 +25,29 @@ class CardRepositoryImpl(
     ): List<Card> {
         return db.cardQueries
             .getCardsPage(limit = limit.toLong(), offset = offset.toLong())
+            .executeAsList()
+            .map { r ->
+                Card(
+                    id = r.id,
+                    baseId = r.base_id,
+                    variant = r.variant,
+                    name = r.name,
+                    imageUrl = r.image_url,
+                )
+            }
+    }
+
+    override suspend fun searchCardsCount(query: String): Long {
+        return db.cardQueries.searchCardsCount(query).executeAsOne()
+    }
+
+    override suspend fun searchCardsByName(
+        query: String,
+        limit: Int,
+        offset: Int
+    ): List<Card> {
+        return db.cardQueries
+            .searchCardsByName(query, limit.toLong(), offset.toLong())
             .executeAsList()
             .map { r ->
                 Card(
