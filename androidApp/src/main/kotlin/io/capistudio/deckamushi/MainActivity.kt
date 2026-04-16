@@ -14,6 +14,7 @@ import io.capistudio.deckamushi.data.local.db.DatabaseDriverFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.di.AppDependencies
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
+import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
@@ -42,7 +43,12 @@ class MainActivity : ComponentActivity() {
                     searchCardByNameUseCase = SearchCardByNameUseCase(repository),
                     getCardsFoundByNameCountUseCase = GetCardsFoundByNameCountUseCase(repository),
                 )
-                AppDependencies(updateCardDataUseCase = useCase, viewModel)
+                val getCardByIdUseCase = GetCardByIdUseCase(repository)
+                AppDependencies(
+                    updateCardDataUseCase = useCase,
+                    cardsBrowserViewModel = viewModel,
+                    getCardByIdUseCase = getCardByIdUseCase
+                )
             }
             App(deps)
         }

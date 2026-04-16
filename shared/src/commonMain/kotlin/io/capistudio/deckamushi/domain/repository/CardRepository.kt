@@ -4,6 +4,7 @@ import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.domain.model.Card
 
 interface CardRepository {
+    suspend fun getCardById(id: String): Card?
     suspend fun getCardsCount(): Long
     suspend fun getCardsPage(limit: Int, offset: Int): List<Card>
     suspend fun searchCardsCount(query: String): Long
@@ -14,6 +15,19 @@ class CardRepositoryImpl(
     private val dbProvider: AppDatabaseProvider,
 ) : CardRepository {
     val db = dbProvider.db
+
+    override suspend fun getCardById(id: String): Card? {
+        return db.cardQueries.getCardById(id).executeAsOneOrNull()
+            ?.let { r ->
+                Card(
+                    id = r.id,
+                    baseId = r.base_id,
+                    variant = r.variant,
+                    name = r.name,
+                    imageUrl = r.image_url,
+                )
+            }
+    }
 
     override suspend fun getCardsCount(): Long {
         return db.cardQueries.getCardsCount().executeAsOne()

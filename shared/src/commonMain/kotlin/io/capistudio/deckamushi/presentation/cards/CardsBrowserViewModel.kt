@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi.presentation.cards
 
+import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
@@ -14,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 
 
 data class CardBrowserState(
@@ -45,6 +45,9 @@ class CardsBrowserViewModel(
 
     private var searchJob: Job? = null
 
+
+    private val log = Logger.withTag("CardsBrowserVM")
+
     fun loadInitial() {
         refresh()
     }
@@ -62,16 +65,19 @@ class CardsBrowserViewModel(
                 } else {
                     searchCardByNameUseCase(q, pageSize, offset)
                 }
+
                 offset += next.size
-                if (next.isEmpty()) {
+
+                // End reached if we got fewer than a full page.
+                if (next.size < pageSize) {
                     reachedEnd = true
-                    _state.update { it.copy(endReached = true) }
                 }
 
                 _state.update { s ->
                     s.copy(
                         cards = s.cards + next,
                         error = null,
+                        endReached = reachedEnd,
                     )
                 }
             } catch (t: Throwable) {
@@ -114,16 +120,20 @@ class CardsBrowserViewModel(
                 } else {
                     searchCardByNameUseCase(q, pageSize, offset)
                 }
+
                 offset += first.size
-                reachedEnd = first.isEmpty()
+                reachedEnd = first.size < pageSize
+
                 _state.update {
                     it.copy(
                         isLoading = false,
                         totalCount = count,
-                        cards = first
+                        cards = first,
+                        endReached = reachedEnd,
                     )
                 }
             } catch (t: Throwable) {
+                log.e(t) { "refresh failed" }
                 _state.update {
                     it.copy(
                         isLoading = false,

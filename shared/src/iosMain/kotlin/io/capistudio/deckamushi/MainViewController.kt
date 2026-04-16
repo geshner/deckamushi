@@ -8,6 +8,7 @@ import io.capistudio.deckamushi.data.local.db.DatabaseDriverFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.di.AppDependencies
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
+import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
@@ -28,10 +29,12 @@ fun MainViewController() = ComposeUIViewController {
         searchCardByNameUseCase = SearchCardByNameUseCase(repository),
         getCardsFoundByNameCountUseCase = GetCardsFoundByNameCountUseCase(repository),
     )
+    val getCardByIdUseCase = GetCardByIdUseCase(repository)
 
     val deps = AppDependencies(
         updateCardDataUseCase = updateUseCase,
         cardsBrowserViewModel = cardsVm,
+        getCardByIdUseCase = getCardByIdUseCase
     )
 
     App(deps = deps)

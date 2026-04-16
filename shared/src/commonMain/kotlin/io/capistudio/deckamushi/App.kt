@@ -22,15 +22,40 @@ import io.capistudio.deckamushi.data.remote.RemoteResult
 import io.capistudio.deckamushi.di.AppDependencies
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardBrowserScreen
+import io.capistudio.deckamushi.presentation.detail.CardDetailScreen
+import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
+import io.capistudio.deckamushi.presentation.navigation.Screen
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun App(
-    deps: AppDependencies? = null
+    deps: AppDependencies
 ) {
+    var screen by remember { mutableStateOf<Screen>(Screen.Sync) }
     MaterialTheme {
-        CardBrowserScreen(deps!!.cardsBrowserViewModel)
+
+        when (val s = screen) {
+            Screen.Sync -> key("sync") {
+                DebugSyncScreen(
+                    deps = deps,
+                    goToList = { screen = Screen.CardList }
+                )
+            }
+            Screen.CardList -> key("list") {
+                CardBrowserScreen(
+                    viewModel = deps.cardsBrowserViewModel,
+                    onCardClick = { id -> screen = Screen.CardDetail(id) }
+                )
+            }
+            is Screen.CardDetail -> key("detail") {
+                val vm = remember(s.id) { CardDetailViewModel(
+                    s.id, deps.getCardByIdUseCase
+                ) }
+                CardDetailScreen(viewModel = vm, onBack = { screen = Screen.CardList })
+            }
+        }
+
 
 //        DebugSyncScreen(deps)
     }
@@ -38,7 +63,8 @@ fun App(
 
 @Composable
 private fun DebugSyncScreen(
-    deps: AppDependencies?
+    deps: AppDependencies?,
+    goToList: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Idle") }
@@ -89,6 +115,12 @@ private fun DebugSyncScreen(
             }
         ) {
             Text("Sync / Seed cards")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = goToList
+        ) {
+            Text("Go To List")
         }
     }
 }
