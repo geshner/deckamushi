@@ -41,6 +41,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.compose.material3.icons)
 
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
@@ -73,6 +74,8 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.koin.android)
+            implementation(libs.coil)
+            implementation(libs.coil.okhttp)
         }
 
         iosMain.dependencies {

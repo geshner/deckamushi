@@ -28,6 +28,8 @@ kotlinx-coroutines = "1.10.2"
 serialization = "1.11.0"
 buildkonfig = "0.18.0"
 kermit = "2.1.0"
+material-icons = "1.7.3"
+coil = "3.3.0"
 
 [libraries]
 # Kotlin / Coroutines / Serialization
@@ -55,6 +57,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+compose-material3-icons = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "material-icons" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
@@ -85,6 +88,10 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 
 # Kermit
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+
+# Coil
+coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref= "coil"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

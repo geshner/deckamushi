@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,9 +30,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Action
+import io.capistudio.deckamushi.presentation.components.RemoteImage
 
 @Composable
 fun CardBrowserScreen(
@@ -115,6 +119,14 @@ fun CardBrowserScreen(
                                 onAction(Action.CardClicked(card.id))
                             }
                     ) {
+                        RemoteImage(
+                            url = card.imageUrl,
+                            contentDescription = card.name,
+                            modifier = Modifier
+                                .height(70.dp)
+                                .aspectRatio(0.716f)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
                         Text(
                             modifier = Modifier.padding(16.dp),
                             text = card.name

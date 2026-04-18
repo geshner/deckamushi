@@ -19,7 +19,6 @@ fun CardListRoute(onNavigateToDetail: (String) -> Unit) {
                     onNavigateToDetail(effect.id)
                 is CardsBrowserContract.Effect.ShowMessage -> {
                     //will add snackbars later
-                    TODO()
                 }
             }
         }
