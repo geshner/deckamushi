@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.ComposeUIViewController
 import io.capistudio.deckamushi.core.network.createHttpClient
 import io.capistudio.deckamushi.data.local.VersionCacheFactory
@@ -7,6 +8,7 @@ import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.local.db.DatabaseDriverFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.di.AppDependencies
+import io.capistudio.deckamushi.di.initKoin
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
@@ -20,22 +22,10 @@ fun MainViewController() = ComposeUIViewController {
     val cache = VersionCacheFactory().create()
     val dbProvider = AppDatabaseProvider(DatabaseDriverFactory())
     val api = DeckamushiDataApi(createHttpClient())
-    val updateUseCase = UpdateCardDataUseCase(api, cache, dbProvider)
 
-    val repository = CardRepositoryImpl(dbProvider)
-    val cardsVm = CardsBrowserViewModel(
-        getCardsPageUseCase = GetCardsPageUseCase(repository),
-        getCardsCountUseCase = GetCardsCountUseCase(repository),
-        searchCardByNameUseCase = SearchCardByNameUseCase(repository),
-        getCardsFoundByNameCountUseCase = GetCardsFoundByNameCountUseCase(repository),
-    )
-    val getCardByIdUseCase = GetCardByIdUseCase(repository)
+    LaunchedEffect(Unit) {
+        initKoin(cache, dbProvider, api)
+    }
 
-    val deps = AppDependencies(
-        updateCardDataUseCase = updateUseCase,
-        cardsBrowserViewModel = cardsVm,
-        getCardByIdUseCase = getCardByIdUseCase
-    )
-
-    App(deps = deps)
+    App()
 }

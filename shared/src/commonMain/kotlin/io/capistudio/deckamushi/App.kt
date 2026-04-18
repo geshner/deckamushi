@@ -12,64 +12,58 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.core.network.createHttpClient
 import io.capistudio.deckamushi.data.local.VersionCache
 import io.capistudio.deckamushi.data.local.VersionCacheFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.data.remote.RemoteResult
-import io.capistudio.deckamushi.di.AppDependencies
+import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
-import io.capistudio.deckamushi.presentation.cards.CardBrowserScreen
+import io.capistudio.deckamushi.presentation.cards.CardListRoute
 import io.capistudio.deckamushi.presentation.detail.CardDetailScreen
 import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.navigation.Screen
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 
 @Composable
-fun App(
-    deps: AppDependencies
-) {
+fun App() {
     var screen by remember { mutableStateOf<Screen>(Screen.Sync) }
     MaterialTheme {
 
         when (val s = screen) {
             Screen.Sync -> key("sync") {
                 DebugSyncScreen(
-                    deps = deps,
                     goToList = { screen = Screen.CardList }
                 )
             }
             Screen.CardList -> key("list") {
-                CardBrowserScreen(
-                    viewModel = deps.cardsBrowserViewModel,
-                    onCardClick = { id -> screen = Screen.CardDetail(id) }
+                CardListRoute(
+                    onNavigateToDetail = { id -> screen = Screen.CardDetail(id) }
                 )
             }
             is Screen.CardDetail -> key("detail") {
+                val getCardByIdUseCase: GetCardByIdUseCase = koinInject()
                 val vm = remember(s.id) { CardDetailViewModel(
-                    s.id, deps.getCardByIdUseCase
+                    s.id, getCardByIdUseCase
                 ) }
                 CardDetailScreen(viewModel = vm, onBack = { screen = Screen.CardList })
             }
         }
-
-
-//        DebugSyncScreen(deps)
     }
 }
 
 @Composable
 private fun DebugSyncScreen(
-    deps: AppDependencies?,
     goToList: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Idle") }
     var lastSeededVersion by remember { mutableStateOf<String?>(null)}
     var lastSeededCount by remember { mutableStateOf<Int?>(null) }
+    val updateCardDataUseCase: UpdateCardDataUseCase = koinInject()
 
     Column(
         modifier = Modifier
@@ -88,17 +82,12 @@ private fun DebugSyncScreen(
         Spacer(Modifier.height(12.dp))
 
         Button(
-            enabled = deps != null && status != "Working...",
+            enabled = status != "Working...",
             onClick = {
                 scope.launch {
-                    val useCase = deps?.updateCardDataUseCase
-                    if (useCase == null) {
-                        status = "Deps not provided"
-                        return@launch
-                    }
 
                     status = "Working..."
-                    when (val result = useCase.run()) {
+                    when (val result = updateCardDataUseCase.run()) {
                         is UpdateCardDataUseCase.Result.UpToDate -> {
                             status = "Up to date"
                         }

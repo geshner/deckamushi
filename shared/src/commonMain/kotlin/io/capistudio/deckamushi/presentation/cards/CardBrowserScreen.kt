@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -22,35 +24,39 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Action
 
 @Composable
 fun CardBrowserScreen(
-    viewModel: CardsBrowserViewModel,
-    onCardClick: (String) -> Unit,
+    state: CardsBrowserContract.State,
+    onAction: (Action) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
         // Override any restored position.
         listState.scrollToItem(0)
-        viewModel.loadInitial()
+        onAction(Action.OnStart)
     }
 
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) listState.scrollToItem(0)
+    LaunchedEffect(state.isSearching) {
+        if (state.isSearching) listState.scrollToItem(0)
     }
 
-    val shouldLoadMore by remember(state.cards.size, state.isLoading, state.isAppending, state.endReached) {
+    val shouldLoadMore by remember(
+        state.cards.size,
+        state.isSearching,
+        state.isAppending,
+        state.endReached
+    ) {
         derivedStateOf {
-            if (state.isLoading || state.isAppending || state.endReached) return@derivedStateOf false
+            if (state.isSearching || state.isAppending || state.endReached) return@derivedStateOf false
             if (state.cards.isEmpty()) return@derivedStateOf false
 
             val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
@@ -63,17 +69,23 @@ fun CardBrowserScreen(
     }
 
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) viewModel.loadMore()
+        if (shouldLoadMore) onAction(Action.LoadMore)
     }
 
     Scaffold(
         modifier = Modifier.safeContentPadding(),
         topBar = {
             OutlinedTextField(
-                value = state.query,
-                onValueChange = { viewModel.onQueryChanged(it) },
+                value = state.queryDraft,
+                onValueChange = { onAction(Action.QueryChanged(it)) },
                 label = { Text("Search by name") },
                 singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        onAction(Action.SearchClicked)
+                    }
+                ),
             )
         }
     ) { padding ->
@@ -99,9 +111,9 @@ fun CardBrowserScreen(
                     Card(
                         modifier = Modifier
                             .padding(8.dp)
-                            .clickable(true){
-                            onCardClick(card.id)
-                        }
+                            .clickable(true) {
+                                onAction(Action.CardClicked(card.id))
+                            }
                     ) {
                         Text(
                             modifier = Modifier.padding(16.dp),
@@ -110,7 +122,7 @@ fun CardBrowserScreen(
                     }
                 }
 
-                if (state.cards.isNotEmpty().or(state.isAppending)) {
+                if (state.cards.isNotEmpty() || state.isAppending) {
                     item(key = "footer") {
                         Spacer(Modifier.height(8.dp))
 

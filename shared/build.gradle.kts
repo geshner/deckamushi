@@ -44,6 +44,7 @@ kotlin {
 
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.compose.viewmodel.navigation)
@@ -71,6 +72,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.datastore.preferences)
+            implementation(libs.koin.android)
         }
 
         iosMain.dependencies {

@@ -1,147 +1,165 @@
 package io.capistudio.deckamushi.presentation.cards
 
 import co.touchlab.kermit.Logger
-import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
 import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
+import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Action
+import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Effect
+import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.State
+import io.capistudio.deckamushi.presentation.mvi.Mvi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-
-data class CardBrowserState(
-    val isLoading: Boolean = false,
-    val totalCount: Long? = null,
-    val cards: List<Card> = emptyList(),
-    val error: String? = null,
-    val query: String = "",
-    val isAppending: Boolean = false,
-    val endReached: Boolean = false,
-)
-
 
 class CardsBrowserViewModel(
     private val getCardsPageUseCase: GetCardsPageUseCase,
     private val getCardsCountUseCase: GetCardsCountUseCase,
     private val searchCardByNameUseCase: SearchCardByNameUseCase,
     private val getCardsFoundByNameCountUseCase: GetCardsFoundByNameCountUseCase,
-    private val scope: CoroutineScope = MainScope(),
+    scope: CoroutineScope = MainScope(),
+) : Mvi<State, Action, Effect>(
+    initialState = State(),
+    scope = scope
 ) {
-    private val pageSize = 50
-    private var offset = 0
-    private var reachedEnd = false
-    private var loading = false
-
-    private val _state = MutableStateFlow(CardBrowserState())
-    val state: StateFlow<CardBrowserState> = _state
-
-    private var searchJob: Job? = null
-
-
     private val log = Logger.withTag("CardsBrowserVM")
 
-    fun loadInitial() {
-        refresh()
+    private val pageSize = 50
+    private var offset = 0
+    private var loadingJob: Job? = null
+
+    override suspend fun handleAction(action: Action) {
+        when (action) {
+            Action.OnStart -> refreshAllCards()
+            is Action.QueryChanged -> {
+                setState { copy(queryDraft = action.value) }
+            }
+
+            Action.SearchClicked -> refreshSearchOrAll()
+            Action.LoadMore -> loadMore()
+            is Action.CardClicked -> emitEffect(Effect.NavigateToDetail(action.id))
+        }
     }
 
-    fun loadMore() {
-        if (loading || reachedEnd) return
-        loading = true
-        _state.update { it.copy(isAppending = true) }
-        scope.launch {
-            delay(1000)
-            try {
-                val q = _state.value.query.trim()
-                val next = if (q.isBlank()) {
-                    getCardsPageUseCase(limit = pageSize, offset = offset)
-                } else {
-                    searchCardByNameUseCase(q, pageSize, offset)
-                }
+    private suspend fun refreshSearchOrAll() {
+        val query = state.value.queryDraft.trim()
+        if (query.isBlank()) refreshAllCards() else refreshSearch(query)
+    }
 
-                offset += next.size
+    private suspend fun refreshAllCards() {
+        if (loadingJob?.isActive == true) return
 
-                // End reached if we got fewer than a full page.
-                if (next.size < pageSize) {
-                    reachedEnd = true
-                }
+        offset = 0
+        setState {
+            copy(
+                isSearching = true,
+                isAppending = false,
+                endReached = false,
+                error = null
+            )
+        }
 
-                _state.update { s ->
-                    s.copy(
-                        cards = s.cards + next,
-                        error = null,
-                        endReached = reachedEnd,
+        loadingJob = scope.launch {
+            runCatching {
+                val page = getCardsPageUseCase(pageSize, offset)
+                val count = getCardsCountUseCase()
+
+                val endReachedNow = page.size < pageSize
+                offset += page.size
+
+                setState {
+                    copy(
+                        isSearching = false,
+                        cards = page,
+                        totalCount = count,
+                        endReached = endReachedNow,
+                        error = null
                     )
                 }
-            } catch (t: Throwable) {
-                _state.update { it.copy(error = t.message ?: "Unknown error") }
-            } finally {
-                loading = false
-                _state.update { it.copy(isAppending = false) }
+            }.onFailure { e ->
+                log.e(e) { "refreshAllCards failed" }
+                setState {
+                    copy(isSearching = false, error = e.message ?: "Unknow error")
+                }
             }
         }
     }
 
-    fun onQueryChanged(newQuery: String) {
-        _state.update { it.copy(query = newQuery) }
-        searchJob?.cancel()
-        searchJob = scope.launch {
-            delay(300)
-            refresh()
+    private suspend fun refreshSearch(query: String) {
+        if (loadingJob?.isActive == true) return
+
+        offset = 0
+        setState {
+            copy(
+                isSearching = true,
+                isAppending = false,
+                endReached = false,
+                error = null,
+            )
+        }
+
+        loadingJob = scope.launch {
+            runCatching {
+                val page = searchCardByNameUseCase(query = query, limit = pageSize, offset = offset)
+                val count = getCardsFoundByNameCountUseCase(query = query)
+
+                val endReachedNow = page.size < pageSize
+                offset += page.size
+
+                setState {
+                    copy(
+                        isSearching = false,
+                        cards = page,
+                        totalCount = count,
+                        endReached = endReachedNow,
+                        error = null,
+                    )
+                }
+            }.onFailure { e ->
+                log.e(e) { "refreshSearch failed" }
+                setState { copy(isSearching = false, error = e.message ?: "Unknown error") }
+            }
         }
     }
 
-    fun refresh() {
-        if (loading) return
+    private suspend fun loadMore() {
+        val s = state.value
 
-        loading = true
-        scope.launch {
-            _state.update { it.copy(isLoading = true, error = null, endReached = false) }
+        if (s.isSearching || s.isAppending || s.endReached) return
+        if (s.cards.isEmpty()) return
+        if (loadingJob?.isActive == true) return
 
-            val q = _state.value.query.trim()
-            offset = 0
-            reachedEnd = false
+        setState { copy(isAppending = true, error = null) }
 
-            try {
-                val count = if (q.isBlank()) {
-                    getCardsCountUseCase()
+        val query = s.queryDraft.trim()
+
+        loadingJob = scope.launch {
+            runCatching {
+                val page = if (query.isBlank()) {
+                    getCardsPageUseCase(limit = pageSize, offset = offset)
                 } else {
-                    getCardsFoundByNameCountUseCase(q)
-                }
-                val first = if (q.isBlank()) {
-                    getCardsPageUseCase(pageSize, offset)
-                } else {
-                    searchCardByNameUseCase(q, pageSize, offset)
+                    searchCardByNameUseCase(query, pageSize, offset)
                 }
 
-                offset += first.size
-                reachedEnd = first.size < pageSize
+                val endReachedNow = page.size < pageSize
+                offset += page.size
 
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        totalCount = count,
-                        cards = first,
-                        endReached = reachedEnd,
+                setState {
+                    copy(
+                        isAppending = false,
+                        cards = cards + page,
+                        endReached = endReachedNow,
+                        error = null
                     )
                 }
-            } catch (t: Throwable) {
-                log.e(t) { "refresh failed" }
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        error = t.message
-                    )
+            }.onFailure { e ->
+                log.e(e) { "loadMore failed" }
+                setState {
+                    copy(isAppending = false, error = e.message ?: "Unknow error")
                 }
-            } finally {
-                loading = false
             }
         }
     }
