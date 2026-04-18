@@ -1,7 +1,9 @@
 package io.capistudio.deckamushi.presentation.detail
 
-import io.capistudio.deckamushi.domain.model.Card
+import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
+import io.capistudio.deckamushi.presentation.detail.CardDetailContract.Effect
+import io.capistudio.deckamushi.presentation.mvi.Mvi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -9,29 +11,41 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class CardDetailState(
-    val isLoading: Boolean = false,
-    val card: Card? = null,
-    val error: String? = null,
-)
-
-
 class CardDetailViewModel(
     private val cardId: String,
     private val getCardByIdUseCase: GetCardByIdUseCase,
-    private val scope: CoroutineScope = MainScope(),
+    scope: CoroutineScope = MainScope(),
+) : Mvi<CardDetailContract.State, CardDetailContract.Action, CardDetailContract.Effect>(
+    initialState = CardDetailContract.State(),
+    scope = scope
 ) {
-    private val _state = MutableStateFlow(CardDetailState())
-    val state: StateFlow<CardDetailState> = _state
 
-    fun load() {
+    private val log = Logger.withTag("CardDetailVM")
+
+    override suspend fun handleAction(action: CardDetailContract.Action) {
+        when (action) {
+            CardDetailContract.Action.BackClicked -> emitEffect(Effect.NavigateBack)
+            CardDetailContract.Action.OnStart -> load()
+        }
+    }
+
+    private suspend fun load() {
+
+        if (state.value.isLoading) return
+
+        setState { copy(isLoading = true, error = null) }
+
         scope.launch {
-            _state.value = CardDetailState(isLoading = true)
-            try {
+            runCatching {
                 val card = getCardByIdUseCase(cardId)
-                _state.value = CardDetailState(isLoading = false, card = card)
-            } catch (t: Throwable) {
-                _state.value = CardDetailState(isLoading = false, error = t.message ?: "Unknown error")
+                setState { copy(
+                    isLoading = false,
+                    card = card,
+                    error = null
+                ) }
+            }.onFailure { t ->
+                log.e(t) { "load card failed (id=$cardId)" }
+                setState { copy(isLoading = false, card = null, error = t.message ?: "Unknown error") }
             }
         }
     }

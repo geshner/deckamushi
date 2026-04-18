@@ -8,26 +8,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.capistudio.deckamushi.presentation.detail.CardDetailContract.Action
 
 @Composable
 fun CardDetailScreen(
-    viewModel: CardDetailViewModel,
-    onBack: () -> Unit,
+    state: CardDetailContract.State,
+    onAction: (Action) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.load()
+        onAction(Action.OnStart)
     }
 
     Column(
         modifier = Modifier.safeContentPadding()
     ) {
-        Button(onClick = onBack) { Text("Back") }
+        Button(onClick = { onAction(Action.BackClicked) }) { Text("Back") }
         Spacer(Modifier.height(12.dp))
 
         when {

@@ -9,7 +9,13 @@ import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,11 +24,9 @@ import io.capistudio.deckamushi.data.local.VersionCache
 import io.capistudio.deckamushi.data.local.VersionCacheFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.data.remote.RemoteResult
-import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
-import io.capistudio.deckamushi.presentation.detail.CardDetailScreen
-import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
+import io.capistudio.deckamushi.presentation.detail.CardDetailRoute
 import io.capistudio.deckamushi.presentation.navigation.Screen
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -39,17 +43,15 @@ fun App() {
                     goToList = { screen = Screen.CardList }
                 )
             }
+
             Screen.CardList -> key("list") {
-                CardListRoute(
-                    onNavigateToDetail = { id -> screen = Screen.CardDetail(id) }
-                )
+                CardListRoute { id -> screen = Screen.CardDetail(id) }
             }
+
             is Screen.CardDetail -> key("detail") {
-                val getCardByIdUseCase: GetCardByIdUseCase = koinInject()
-                val vm = remember(s.id) { CardDetailViewModel(
-                    s.id, getCardByIdUseCase
-                ) }
-                CardDetailScreen(viewModel = vm, onBack = { screen = Screen.CardList })
+                CardDetailRoute(s.id) {
+                    screen = Screen.CardList
+                }
             }
         }
     }
@@ -61,7 +63,7 @@ private fun DebugSyncScreen(
 ) {
     val scope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Idle") }
-    var lastSeededVersion by remember { mutableStateOf<String?>(null)}
+    var lastSeededVersion by remember { mutableStateOf<String?>(null) }
     var lastSeededCount by remember { mutableStateOf<Int?>(null) }
     val updateCardDataUseCase: UpdateCardDataUseCase = koinInject()
 
@@ -91,11 +93,13 @@ private fun DebugSyncScreen(
                         is UpdateCardDataUseCase.Result.UpToDate -> {
                             status = "Up to date"
                         }
+
                         is UpdateCardDataUseCase.Result.Seeded -> {
                             status = "Seeded OK"
                             lastSeededVersion = result.cardsVersion
                             lastSeededCount = result.insertedOrReplaced
                         }
+
                         is UpdateCardDataUseCase.Result.Error -> {
                             status = "Error: ${result.message}"
                         }
@@ -151,13 +155,16 @@ private fun VersionFetchLessonScreen(
 
                     status = "Fetching..."
                     when (val result = api.fetchVersion(etag = etag)) {
-                        is RemoteResult.HttpError -> status = "HTTP ${result.code}: ${result.message}"
+                        is RemoteResult.HttpError -> status =
+                            "HTTP ${result.code}: ${result.message}"
+
                         is RemoteResult.NetworkError -> status = "Network error: ${result.message}"
                         is RemoteResult.NotModified -> {
                             status = "not Modified (304)"
                             etag = result.eTag
                             cache?.setVersionETag(etag)
                         }
+
                         is RemoteResult.Success -> {
                             status = "OK (200)"
                             etag = result.eTag
