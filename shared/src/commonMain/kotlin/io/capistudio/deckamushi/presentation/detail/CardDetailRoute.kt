@@ -7,16 +7,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun CardDetailRoute(
     cardId: String,
     onNavigateBack: () -> Unit,
 ) {
-    val getCardByIdUseCase = koinInject<GetCardByIdUseCase>()
-    val vm = remember(cardId) {
-        CardDetailViewModel(cardId, getCardByIdUseCase)
-    }
+    val vm: CardDetailViewModel = koinInject { parametersOf(cardId) }
 
     val state by vm.state.collectAsState()
 

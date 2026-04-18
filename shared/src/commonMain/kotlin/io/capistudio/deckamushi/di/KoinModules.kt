@@ -12,6 +12,8 @@ import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
 import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
+import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
+import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -28,6 +30,7 @@ private val sharedModule = module {
     factory { SearchCardByNameUseCase(repository = get()) }
     factory { UpdateCardDataUseCase(api = get(), cache = get(), dbProvider = get()) }
 
+    //ViewModels
     factory {
         CardsBrowserViewModel(
             getCardsPageUseCase = get(),
@@ -36,6 +39,10 @@ private val sharedModule = module {
             getCardsFoundByNameCountUseCase = get()
         )
     }
+    factory { SyncViewModel(updateCardDataUseCase = get()) }
+    factory { (cardId: String) -> CardDetailViewModel(
+        cardId, getCardByIdUseCase = get()
+    ) }
 }
 
 fun initKoin(
