@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
+import io.capistudio.deckamushi.presentation.collection.CollectionRoute
 import io.capistudio.deckamushi.presentation.detail.CardDetailRoute
 import io.capistudio.deckamushi.presentation.navigation.Screen
 import io.capistudio.deckamushi.presentation.sync.SyncRoute
@@ -53,6 +55,12 @@ fun App() {
                             label = { Text("Cards")}
                         )
                         NavigationBarItem(
+                            selected = screen is Screen.Collection,
+                            onClick = { screen = Screen.Collection },
+                            icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "collection")},
+                            label = { Text("My Collection") }
+                        )
+                        NavigationBarItem(
                             selected = screen is Screen.Sync,
                             onClick = { screen = Screen.Sync },
                             icon = { Icon(Icons.Default.Sync, contentDescription = "Sync") },
@@ -74,6 +82,13 @@ fun App() {
 
                     Screen.CardList -> key("list") {
                         CardListRoute(
+                            showSnackbar = showSnackbar,
+                            onNavigateToDetail = { id -> screen = Screen.CardDetail(id) }
+                        )
+                    }
+
+                    Screen.Collection -> key("collection") {
+                        CollectionRoute(
                             showSnackbar = showSnackbar,
                             onNavigateToDetail = { id -> screen = Screen.CardDetail(id) }
                         )

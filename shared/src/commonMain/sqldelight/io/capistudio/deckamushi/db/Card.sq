@@ -76,3 +76,13 @@ searchCardsCount:
 SELECT COUNT(*)
 FROM cards
 WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%';
+
+getOwnedCards:
+SELECT
+    c.*,
+    col.quantity AS owned_quantity
+FROM cards c
+JOIN collection col
+    ON col.card_id = c.id
+ORDER BY c.base_id, c.variant
+LIMIT :limit OFFSET :offset;

@@ -10,11 +10,14 @@ import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
+import io.capistudio.deckamushi.domain.usecase.GetOwnedCardsUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
+import io.capistudio.deckamushi.domain.usecase.GetOwnedTotalUseCase
 import io.capistudio.deckamushi.domain.usecase.IncrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
+import io.capistudio.deckamushi.presentation.collection.CollectionViewModel
 import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.core.KoinApplication
@@ -35,6 +38,8 @@ private val sharedModule = module {
     factory { IncrementOwnedUseCase(repository = get()) }
     factory { DecrementOwnedUseCase(repository = get()) }
     factory { UpdateCardDataUseCase(api = get(), cache = get(), dbProvider = get()) }
+    factory { GetOwnedCardsUseCase(repository = get()) }
+    factory { GetOwnedTotalUseCase(repository = get()) }
 
     //ViewModels
     factory {
@@ -53,6 +58,12 @@ private val sharedModule = module {
         incrementOwnedUseCase = get(),
         decrementOwnedUseCase = get()
     ) }
+    factory {
+        CollectionViewModel(
+            getOwnedCardsUseCase = get(),
+            getOwnedTotalUseCase = get(),
+        )
+    }
 }
 
 fun initKoin(

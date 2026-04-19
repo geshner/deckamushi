@@ -2,6 +2,7 @@ package io.capistudio.deckamushi.domain.repository
 
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.domain.model.Card
+import io.capistudio.deckamushi.domain.model.OwnedCard
 
 interface CardRepository {
     suspend fun getCardById(id: String): Card?
@@ -12,6 +13,8 @@ interface CardRepository {
     suspend fun getOwnedQuantity(cardId: String): Long
     suspend fun incrementOwned(cardId: String)
     suspend fun decrementOwned(cardId: String)
+    suspend fun getOwnedCards(limit: Int, offset: Int): List<OwnedCard>
+    suspend fun getOwnedTotal(): Long
 }
 
 class CardRepositoryImpl(
@@ -91,5 +94,24 @@ class CardRepositoryImpl(
     override suspend fun decrementOwned(cardId: String) {
         db.collectionQueries.deleteIfQuantityIsOne(cardId)
         db.collectionQueries.decrementQuantity(cardId)
+    }
+
+    override suspend fun getOwnedCards(limit: Int, offset: Int): List<OwnedCard> {
+        return db.cardQueries.getOwnedCards(limit.toLong(), offset.toLong())
+            .executeAsList()
+            .map { r ->
+                OwnedCard(
+                    id = r.id,
+                    baseId = r.base_id,
+                    variant = r.variant,
+                    name = r.name,
+                    imageUrl = r.image_url,
+                    ownedQuantity = r.owned_quantity
+                )
+            }
+    }
+
+    override suspend fun getOwnedTotal(): Long {
+        return db.collectionQueries.getOwnedTotal().executeAsOneOrNull() ?: 0L
     }
 }

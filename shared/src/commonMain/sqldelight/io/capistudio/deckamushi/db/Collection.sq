@@ -17,10 +17,9 @@ WHERE card_id = ?),
 0
 ) AS quantity;
 
-getAllOwned:
-SELECT *
-FROM collection
-ORDER BY card_id;
+getOwnedTotal:
+SELECT COUNT(*)
+FROM collection;
 
 incrementQuantity:
 INSERT OR REPLACE INTO collection(card_id, quantity)
