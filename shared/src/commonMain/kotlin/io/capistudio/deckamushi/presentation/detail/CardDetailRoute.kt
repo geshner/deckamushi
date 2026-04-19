@@ -12,6 +12,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun CardDetailRoute(
     cardId: String,
+    showSnackbar: (String) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
     val vm: CardDetailViewModel = koinInject { parametersOf(cardId) }
@@ -23,7 +24,7 @@ fun CardDetailRoute(
             when (effect) {
                 CardDetailContract.Effect.NavigateBack -> onNavigateBack()
                 is CardDetailContract.Effect.ShowMessage -> {
-                    TODO("handle later the display of snackbars")
+                    showSnackbar(effect.message)
                 }
             }
         }

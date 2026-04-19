@@ -5,10 +5,13 @@ import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
+import io.capistudio.deckamushi.domain.usecase.DecrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
+import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
+import io.capistudio.deckamushi.domain.usecase.IncrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
@@ -28,6 +31,9 @@ private val sharedModule = module {
     factory { GetCardsFoundByNameCountUseCase(repository = get()) }
     factory { GetCardsPageUseCase(repository = get()) }
     factory { SearchCardByNameUseCase(repository = get()) }
+    factory { GetOwnedQuantityUseCase(repository = get()) }
+    factory { IncrementOwnedUseCase(repository = get()) }
+    factory { DecrementOwnedUseCase(repository = get()) }
     factory { UpdateCardDataUseCase(api = get(), cache = get(), dbProvider = get()) }
 
     //ViewModels
@@ -41,7 +47,11 @@ private val sharedModule = module {
     }
     factory { SyncViewModel(updateCardDataUseCase = get()) }
     factory { (cardId: String) -> CardDetailViewModel(
-        cardId, getCardByIdUseCase = get()
+        cardId = cardId,
+        getCardByIdUseCase = get(),
+        getOwnedQuantityUseCase = get(),
+        incrementOwnedUseCase = get(),
+        decrementOwnedUseCase = get()
     ) }
 }
 

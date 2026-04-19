@@ -8,7 +8,10 @@ import io.capistudio.deckamushi.presentation.navigation.Screen
 import org.koin.compose.koinInject
 
 @Composable
-fun CardListRoute(onNavigateToDetail: (String) -> Unit) {
+fun CardListRoute(
+    onNavigateToDetail: (String) -> Unit,
+    showSnackbar: (String) -> Unit,
+) {
     val vm: CardsBrowserViewModel = koinInject()
     val state by vm.state.collectAsState()
 
@@ -18,7 +21,7 @@ fun CardListRoute(onNavigateToDetail: (String) -> Unit) {
                 is CardsBrowserContract.Effect.NavigateToDetail ->
                     onNavigateToDetail(effect.id)
                 is CardsBrowserContract.Effect.ShowMessage -> {
-                    //will add snackbars later
+                    showSnackbar(effect.message)
                 }
             }
         }

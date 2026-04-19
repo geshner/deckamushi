@@ -1,18 +1,21 @@
 CREATE TABLE collection (
     card_id TEXT NOT NULL PRIMARY KEY,
     quantity INTEGER NOT NULL DEFAULT 1,
-    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE,
-    CHECK (quantity >= 1)
+    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
 );
 
-deleteCollectionEntry:
+deleteIfQuantityIsOne:
 DELETE FROM collection
-WHERE card_id = ?;
+WHERE card_id = :card_id
+    AND quantity = 1;
 
 getQuantityByCardId:
-SELECT quantity
+SELECT COALESCE (
+(SELECT quantity
 FROM collection
-WHERE card_id = ?;
+WHERE card_id = ?),
+0
+) AS quantity;
 
 getAllOwned:
 SELECT *
@@ -22,8 +25,8 @@ ORDER BY card_id;
 incrementQuantity:
 INSERT OR REPLACE INTO collection(card_id, quantity)
 VALUES (
-  ?,
-  COALESCE((SELECT quantity FROM collection WHERE card_id = ?), 0) + 1
+  :cardId,
+  COALESCE((SELECT quantity FROM collection WHERE card_id = :cardId), 0) + 1
 );
 
 decrementQuantity:

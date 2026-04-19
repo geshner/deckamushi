@@ -9,6 +9,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun SyncRoute(
+    showSnackbar: (String) -> Unit,
     onNavigateToList: () -> Unit,
 ) {
     val vm: SyncViewModel = koinInject()
@@ -18,9 +19,7 @@ fun SyncRoute(
         vm.effects.collect { effect ->
             when (effect) {
                 Effect.NavigateToList -> onNavigateToList()
-                is Effect.ShowMessage -> {
-                    // snackbars later
-                }
+                is Effect.ShowMessage -> showSnackbar(effect.message)
             }
         }
     }

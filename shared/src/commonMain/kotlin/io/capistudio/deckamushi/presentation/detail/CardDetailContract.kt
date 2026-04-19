@@ -8,11 +8,14 @@ object CardDetailContract {
         val isLoading : Boolean = false,
         val card: Card? = null,
         val error: String? = null,
+        val ownedQuantity: Long = 0L,
     )
 
     sealed interface Action {
         data object OnStart: Action
         data object BackClicked: Action
+        data object IncrementOwnedClick : Action
+        data object DecrementOwnedClick : Action
     }
 
     sealed interface Effect {

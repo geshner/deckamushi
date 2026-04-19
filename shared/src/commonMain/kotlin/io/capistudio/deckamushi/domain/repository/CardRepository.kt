@@ -9,6 +9,9 @@ interface CardRepository {
     suspend fun getCardsPage(limit: Int, offset: Int): List<Card>
     suspend fun searchCardsCount(query: String): Long
     suspend fun searchCardsByName(query: String, limit: Int, offset: Int): List<Card>
+    suspend fun getOwnedQuantity(cardId: String): Long
+    suspend fun incrementOwned(cardId: String)
+    suspend fun decrementOwned(cardId: String)
 }
 
 class CardRepositoryImpl(
@@ -72,5 +75,21 @@ class CardRepositoryImpl(
                     imageUrl = r.image_url,
                 )
             }
+    }
+
+    override suspend fun getOwnedQuantity(cardId: String): Long {
+        return db.collectionQueries
+            .getQuantityByCardId(cardId)
+            .executeAsOneOrNull()
+            ?: 0L
+    }
+
+    override suspend fun incrementOwned(cardId: String) {
+        db.collectionQueries.incrementQuantity(cardId)
+    }
+
+    override suspend fun decrementOwned(cardId: String) {
+        db.collectionQueries.deleteIfQuantityIsOne(cardId)
+        db.collectionQueries.decrementQuantity(cardId)
     }
 }
