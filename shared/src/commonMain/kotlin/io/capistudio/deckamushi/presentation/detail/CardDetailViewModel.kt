@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi.presentation.detail
 
+import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.usecase.DecrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
@@ -18,10 +19,8 @@ class CardDetailViewModel(
     private val getOwnedQuantityUseCase: GetOwnedQuantityUseCase,
     private val incrementOwnedUseCase: IncrementOwnedUseCase,
     private val decrementOwnedUseCase: DecrementOwnedUseCase,
-    scope: CoroutineScope = MainScope(),
 ) : Mvi<CardDetailContract.State, CardDetailContract.Action, CardDetailContract.Effect>(
     initialState = CardDetailContract.State(),
-    scope = scope
 ) {
 
     private val log = Logger.withTag("CardDetailVM")
@@ -47,7 +46,7 @@ class CardDetailViewModel(
 
         setState { copy(isLoading = true, error = null) }
 
-        scope.launch {
+        viewModelScope.launch {
             loadCardDetail()
             loadOwned()
         }
@@ -78,9 +77,5 @@ class CardDetailViewModel(
 
     private suspend fun decrementOwnedCount() {
         decrementOwnedUseCase(cardId)
-    }
-
-    fun clear() {
-        scope.cancel()
     }
 }

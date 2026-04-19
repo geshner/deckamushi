@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi.presentation.cards
 
+import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
@@ -20,10 +21,8 @@ class CardsBrowserViewModel(
     private val getCardsCountUseCase: GetCardsCountUseCase,
     private val searchCardByNameUseCase: SearchCardByNameUseCase,
     private val getCardsFoundByNameCountUseCase: GetCardsFoundByNameCountUseCase,
-    scope: CoroutineScope = MainScope(),
 ) : Mvi<State, Action, Effect>(
     initialState = State(),
-    scope = scope
 ) {
     private val log = Logger.withTag("CardsBrowserVM")
 
@@ -31,9 +30,17 @@ class CardsBrowserViewModel(
     private var offset = 0
     private var loadingJob: Job? = null
 
+    init {
+        log.i {"CardsBrowserViewmodel created: ${this.hashCode()}"}
+    }
+
     override suspend fun handleAction(action: Action) {
         when (action) {
-            Action.OnStart -> refreshAllCards()
+            Action.OnStart -> {
+                if (state.value.cards.isEmpty()) {
+                    refreshSearchOrAll()
+                }
+            }
             is Action.QueryChanged -> {
                 setState { copy(queryDraft = action.value) }
             }
@@ -62,7 +69,7 @@ class CardsBrowserViewModel(
             )
         }
 
-        loadingJob = scope.launch {
+        loadingJob = viewModelScope.launch {
             runCatching {
                 val page = getCardsPageUseCase(pageSize, offset)
                 val count = getCardsCountUseCase()
@@ -101,7 +108,7 @@ class CardsBrowserViewModel(
             )
         }
 
-        loadingJob = scope.launch {
+        loadingJob = viewModelScope.launch {
             runCatching {
                 val page = searchCardByNameUseCase(query = query, limit = pageSize, offset = offset)
                 val count = getCardsFoundByNameCountUseCase(query = query)
@@ -136,7 +143,7 @@ class CardsBrowserViewModel(
 
         val query = s.queryDraft.trim()
 
-        loadingJob = scope.launch {
+        loadingJob = viewModelScope.launch {
             runCatching {
                 val page = if (query.isBlank()) {
                     getCardsPageUseCase(limit = pageSize, offset = offset)
@@ -162,9 +169,5 @@ class CardsBrowserViewModel(
                 }
             }
         }
-    }
-
-    fun clear() {
-        scope.cancel()
     }
 }

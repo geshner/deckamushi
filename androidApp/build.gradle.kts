@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.koin.compiler)
 }
 
 android {
@@ -46,6 +47,15 @@ dependencies {
     // Needed so Compose Multiplatform resources (composeResources/) are available at runtime on Android
     implementation(libs.compose.components.resources)
 
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.material3)
+
+    implementation(project.dependencies.platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
     debugImplementation(libs.compose.uiTooling)
 }
 

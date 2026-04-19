@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
@@ -13,7 +11,7 @@ import org.koin.core.parameter.parametersOf
 fun CardDetailRoute(
     cardId: String,
     showSnackbar: (String) -> Unit,
-    onNavigateBack: () -> Unit,
+    onBack: () -> Unit,
 ) {
     val vm: CardDetailViewModel = koinInject { parametersOf(cardId) }
 
@@ -22,7 +20,7 @@ fun CardDetailRoute(
     LaunchedEffect(Unit) {
         vm.effects.collect { effect ->
             when (effect) {
-                CardDetailContract.Effect.NavigateBack -> onNavigateBack()
+                CardDetailContract.Effect.NavigateBack -> onBack()
                 is CardDetailContract.Effect.ShowMessage -> {
                     showSnackbar(effect.message)
                 }

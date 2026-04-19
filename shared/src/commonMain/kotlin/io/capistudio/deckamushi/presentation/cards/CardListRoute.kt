@@ -4,15 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import io.capistudio.deckamushi.presentation.navigation.Screen
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CardListRoute(
     onNavigateToDetail: (String) -> Unit,
     showSnackbar: (String) -> Unit,
 ) {
-    val vm: CardsBrowserViewModel = koinInject()
+    val vm: CardsBrowserViewModel = koinViewModel()
     val state by vm.state.collectAsState()
 
     LaunchedEffect(Unit) {

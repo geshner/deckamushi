@@ -1,5 +1,7 @@
 package io.capistudio.deckamushi.presentation.mvi
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,8 +29,7 @@ import kotlinx.coroutines.sync.withLock
  */
 abstract class Mvi<S: Any, A: Any, E: Any>(
     initialState: S,
-    protected val scope: CoroutineScope = MainScope(),
-) {
+) : ViewModel(){
     private val stateMutex = Mutex()
 
     private val _state = MutableStateFlow(initialState)
@@ -44,7 +45,7 @@ abstract class Mvi<S: Any, A: Any, E: Any>(
 
     /** Single entry point for UI actions. */
     fun dispatch(action: A) {
-        scope.launch {
+        viewModelScope.launch {
             stateMutex.withLock {
                 handleAction(action)
             }

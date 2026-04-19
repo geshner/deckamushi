@@ -48,8 +48,6 @@ fun CollectionScreen(
 
 
     LaunchedEffect(Unit) {
-        // Override any restored position.
-        listState.scrollToItem(0)
         onAction(Action.OnStart)
     }
 

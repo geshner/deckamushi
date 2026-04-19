@@ -1,5 +1,7 @@
 package io.capistudio.deckamushi.presentation.collection
 
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.usecase.GetOwnedCardsUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
@@ -16,10 +18,8 @@ import kotlinx.coroutines.launch
 class CollectionViewModel(
     private val getOwnedCardsUseCase: GetOwnedCardsUseCase,
     private val getOwnedTotalUseCase: GetOwnedTotalUseCase,
-    scope: CoroutineScope = MainScope(),
 ) : Mvi<State, Action, Effect>(
     initialState = State(),
-    scope = scope,
 ) {
     private val log = Logger.withTag("CollectionVM")
 
@@ -30,7 +30,11 @@ class CollectionViewModel(
 
     override suspend fun handleAction(action: Action) {
         when (action) {
-            Action.OnStart -> loadOwned()
+            Action.OnStart -> {
+                if (state.value.cards.isEmpty()) {
+                    loadOwned()
+                }
+            }
             Action.LoadMore -> loadMore()
             is Action.CardClicked -> emitEffect(Effect.NavigateToDetail(action.id))
         }
@@ -46,7 +50,7 @@ class CollectionViewModel(
             error = null
         ) }
 
-        loadingJob = scope.launch {
+        loadingJob = viewModelScope.launch {
             runCatching {
                 val page = getOwnedCardsUseCase(pageSize, offset)
                 val count = getOwnedTotalUseCase()
@@ -79,7 +83,7 @@ class CollectionViewModel(
 
         setState { copy(isAppending = true, error = null) }
 
-        loadingJob = scope.launch {
+        loadingJob = viewModelScope.launch {
             runCatching {
                 val page = getOwnedCardsUseCase(pageSize, offset)
 

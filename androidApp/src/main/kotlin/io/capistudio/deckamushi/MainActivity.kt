@@ -10,6 +10,7 @@ import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.local.db.DatabaseDriverFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.di.initKoin
+import io.capistudio.deckamushi.navigation.AndroidAppNavHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            App()
+            AndroidAppNavHost()
         }
     }
 }

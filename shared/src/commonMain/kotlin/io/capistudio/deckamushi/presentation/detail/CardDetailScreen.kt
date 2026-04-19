@@ -43,7 +43,7 @@ fun CardDetailScreen(
             state.error != null -> Text("Error: ${state.error}")
             state.card == null -> Text("Card not found")
             else -> {
-                val c = state.card!!
+                val c = state.card
                 Box(
                     Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center

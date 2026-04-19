@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi.presentation.sync
 
+import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.mvi.Mvi
@@ -11,10 +12,8 @@ import kotlinx.coroutines.launch
 
 class SyncViewModel(
     private val updateCardDataUseCase: UpdateCardDataUseCase,
-    scope: CoroutineScope = MainScope()
 ) : Mvi<State, SyncContract.Action, Effect>(
     initialState = State(),
-    scope = scope
 ) {
     private val log = Logger.withTag("SyncVM")
 
@@ -30,7 +29,7 @@ class SyncViewModel(
 
         setState { copy(isWorking = true) }
 
-        scope.launch {
+        viewModelScope.launch {
             runCatching {
                 when (val result = updateCardDataUseCase.run()) {
                     is UpdateCardDataUseCase.Result.UpToDate -> {

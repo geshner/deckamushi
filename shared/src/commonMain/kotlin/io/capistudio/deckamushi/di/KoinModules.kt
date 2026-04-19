@@ -20,48 +20,39 @@ import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionViewModel
 import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.sync.SyncViewModel
-import org.koin.core.KoinApplication
+import org.koin.core.module.dsl.*
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
 private val sharedModule = module {
-    //Repository
-    single<CardRepository> { CardRepositoryImpl(dbProvider = get()) }
+    // Repository
+    singleOf(::CardRepositoryImpl) { bind<CardRepository>() }
 
-    //Usecases
-    factory { GetCardByIdUseCase(repository = get()) }
-    factory { GetCardsCountUseCase(repository = get()) }
-    factory { GetCardsFoundByNameCountUseCase(repository = get()) }
-    factory { GetCardsPageUseCase(repository = get()) }
-    factory { SearchCardByNameUseCase(repository = get()) }
-    factory { GetOwnedQuantityUseCase(repository = get()) }
-    factory { IncrementOwnedUseCase(repository = get()) }
-    factory { DecrementOwnedUseCase(repository = get()) }
-    factory { UpdateCardDataUseCase(api = get(), cache = get(), dbProvider = get()) }
-    factory { GetOwnedCardsUseCase(repository = get()) }
-    factory { GetOwnedTotalUseCase(repository = get()) }
+    // Use cases
+    factoryOf(::GetCardByIdUseCase)
+    factoryOf(::GetCardsCountUseCase)
+    factoryOf(::GetCardsFoundByNameCountUseCase)
+    factoryOf(::GetCardsPageUseCase)
+    factoryOf(::SearchCardByNameUseCase)
+    factoryOf(::GetOwnedQuantityUseCase)
+    factoryOf(::IncrementOwnedUseCase)
+    factoryOf(::DecrementOwnedUseCase)
+    factoryOf(::UpdateCardDataUseCase)
+    factoryOf(::GetOwnedCardsUseCase)
+    factoryOf(::GetOwnedTotalUseCase)
 
-    //ViewModels
-    factory {
-        CardsBrowserViewModel(
-            getCardsPageUseCase = get(),
-            getCardsCountUseCase = get(),
-            searchCardByNameUseCase = get(),
-            getCardsFoundByNameCountUseCase = get()
-        )
-    }
-    factory { SyncViewModel(updateCardDataUseCase = get()) }
-    factory { (cardId: String) -> CardDetailViewModel(
-        cardId = cardId,
-        getCardByIdUseCase = get(),
-        getOwnedQuantityUseCase = get(),
-        incrementOwnedUseCase = get(),
-        decrementOwnedUseCase = get()
-    ) }
-    factory {
-        CollectionViewModel(
-            getOwnedCardsUseCase = get(),
-            getOwnedTotalUseCase = get(),
+    // ViewModels
+    viewModelOf(::CardsBrowserViewModel)
+    viewModelOf(::SyncViewModel)
+    viewModelOf(::CollectionViewModel)
+
+    viewModel { (cardId: String) ->
+        CardDetailViewModel(
+            cardId = cardId,
+            getCardByIdUseCase = get(),
+            getOwnedQuantityUseCase = get(),
+            incrementOwnedUseCase = get(),
+            decrementOwnedUseCase = get()
         )
     }
 }
