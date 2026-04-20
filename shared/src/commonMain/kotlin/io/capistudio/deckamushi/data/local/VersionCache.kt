@@ -7,7 +7,3 @@ interface VersionCache {
     suspend fun getCardsVersion(): String
     suspend fun setCardsVersion(version: String)
 }
-
-expect class VersionCacheFactory {
-    fun create(): VersionCache
-}

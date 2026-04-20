@@ -47,6 +47,7 @@ dependencies {
     // Needed so Compose Multiplatform resources (composeResources/) are available at runtime on Android
     implementation(libs.compose.components.resources)
 
+    //deleta esses 2 depois
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3)
 
@@ -54,8 +55,10 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
 
+    //deleta esses 2 depois
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
+
     debugImplementation(libs.compose.uiTooling)
 }
 

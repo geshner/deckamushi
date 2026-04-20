@@ -8,16 +8,10 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-actual class VersionCacheFactory(
-    private val context: Context,
-) {
-    actual fun create(): VersionCache = AndroidVersionCache(context)
-}
-
 private const val STORE_NAME = "deckamushi_prefs"
 private val Context.datastore by preferencesDataStore(name = STORE_NAME)
 
-internal class AndroidVersionCache(
+class AndroidVersionCache(
     private val context: Context,
 ) : VersionCache {
 

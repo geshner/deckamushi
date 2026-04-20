@@ -2,39 +2,49 @@ package io.capistudio.deckamushi
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
+import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionRoute
+import io.capistudio.deckamushi.presentation.components.DeckamushiTopAppBar
 import io.capistudio.deckamushi.presentation.detail.CardDetailRoute
+import io.capistudio.deckamushi.presentation.home.HomeScreen
 import io.capistudio.deckamushi.presentation.navigation.Screen
 import io.capistudio.deckamushi.presentation.sync.SyncRoute
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
 fun App() {
-    var screen by remember { mutableStateOf<Screen>(Screen.Sync) }
-    val showBottomBar = screen !is Screen.CardDetail
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+    val currentDestination = navBackStackEntry?.destination
+    val canGoBack = navController.previousBackStackEntry != null
+
+    val title = when {
+        currentDestination?.hasRoute<Screen.Home>() == true -> "Deckamushi"
+        currentDestination?.hasRoute<Screen.CardList>() == true -> "All Cards"
+        currentDestination?.hasRoute<Screen.Collection>() == true -> "My Collection"
+        currentDestination?.hasRoute<Screen.Sync>() == true -> "Sync Data"
+        currentDestination?.hasRoute<Screen.CardDetail>() == true -> "Card Detail"
+        else -> "Deckamushi"
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -44,60 +54,61 @@ fun App() {
 
     MaterialTheme {
         Scaffold(
-            snackbarHost = {SnackbarHost(snackbarHostState) },
-            bottomBar = {
-                if (showBottomBar) {
-                    NavigationBar {
-                        NavigationBarItem(
-                            selected = screen is Screen.CardList,
-                            onClick = { screen = Screen.CardList },
-                            icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Cards") },
-                            label = { Text("Cards")}
-                        )
-                        NavigationBarItem(
-                            selected = screen is Screen.Collection,
-                            onClick = { screen = Screen.Collection },
-                            icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "collection")},
-                            label = { Text("My Collection") }
-                        )
-                        NavigationBarItem(
-                            selected = screen is Screen.Sync,
-                            onClick = { screen = Screen.Sync },
-                            icon = { Icon(Icons.Default.Sync, contentDescription = "Sync") },
-                            label = { Text("Sync")}
-                        )
-                    }
-                }
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                DeckamushiTopAppBar(
+                    title = title,
+                    canGoBack = canGoBack,
+                    onBackClick = { navController.popBackStack() },
+                )
             }
         ) { padding ->
-            Box(
-                modifier = Modifier.padding(padding)
-            ) {
-                when (val s = screen) {
-                    Screen.Sync -> key("sync") {
-                        SyncRoute(showSnackbar) {
-                            screen = Screen.CardList
-                        }
+            Box(modifier = Modifier.padding(padding)) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Home
+                ) {
+                    composable<Screen.Home> {
+                        HomeScreen(
+                            onOpenCards = { navController.navigate(Screen.CardList) },
+                            onOpenCollection = { navController.navigate(Screen.Collection) },
+                            onOpenSync = { navController.navigate(Screen.Sync) },
+                        )
                     }
 
-                    Screen.CardList -> key("list") {
+                    composable<Screen.CardList> {
+                        koinViewModel<CardsBrowserViewModel>()
                         CardListRoute(
                             showSnackbar = showSnackbar,
-                            onNavigateToDetail = { id -> screen = Screen.CardDetail(id) }
+                            onNavigateToDetail = { id ->
+                                navController.navigate(Screen.CardDetail(id))
+                            }
                         )
                     }
 
-                    Screen.Collection -> key("collection") {
+                    composable<Screen.Collection> {
                         CollectionRoute(
                             showSnackbar = showSnackbar,
-                            onNavigateToDetail = { id -> screen = Screen.CardDetail(id) }
+                            onNavigateToDetail = { id ->
+                                navController.navigate(Screen.CardDetail(id))
+                            }
                         )
                     }
 
-                    is Screen.CardDetail -> key("detail") {
-                        CardDetailRoute(s.id, showSnackbar) {
-                            screen = Screen.CardList
+                    composable<Screen.Sync> {
+                        // When Sync finishes, return to Home (hub).
+                        SyncRoute(showSnackbar = showSnackbar) {
+                            navController.popBackStack()
                         }
+                    }
+
+                    composable<Screen.CardDetail> { backStackEntry ->
+                        val detail = backStackEntry.toRoute<Screen.CardDetail>()
+                        CardDetailRoute(
+                            cardId = detail.id,
+                            showSnackbar = showSnackbar,
+                            onBack = { navController.popBackStack() },
+                        )
                     }
                 }
             }

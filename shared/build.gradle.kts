@@ -43,6 +43,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.compose.material3.icons)
+            implementation(libs.androidx.navigation.compose)
 
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
@@ -65,6 +66,10 @@ kotlin {
 
             //Logging
             implementation(libs.kermit)
+
+            //Paging
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.paging.compose)
         }
 
         androidMain.dependencies {

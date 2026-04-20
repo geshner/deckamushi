@@ -19,11 +19,9 @@ fun HomeScreen(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Deckamushi", style = MaterialTheme.typography.headlineSmall)
-
         Button(onClick = onOpenCards) { Text("All Cards") }
         Button(onClick = onOpenCollection) { Text("My Collection") }
         Button(onClick = onOpenSync) { Text("Sync Data") }

@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi.di
 
+import io.capistudio.deckamushi.core.network.createHttpClient
 import io.capistudio.deckamushi.data.local.VersionCache
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
@@ -22,9 +23,19 @@ import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.core.module.dsl.*
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
+// Declare the expectation for platform-specific dependencies
+expect fun platformModule(): Module
+
 private val sharedModule = module {
+    //Platform-independent logic )Ktor
+    single { createHttpClient() }
+    singleOf(::DeckamushiDataApi)
+
+
     // Repository
     singleOf(::CardRepositoryImpl) { bind<CardRepository>() }
 
@@ -57,18 +68,12 @@ private val sharedModule = module {
     }
 }
 
-fun initKoin(
-    cache: VersionCache,
-    dbProvider: AppDatabaseProvider,
-    api: DeckamushiDataApi,
-) {
-    val platformModule = module {
-        single { cache }
-        single { dbProvider }
-        single { api }
-    }
-
+fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
-        modules(platformModule, sharedModule)
+        config?.invoke(this)
+        modules(
+            platformModule(),
+            sharedModule
+        )
     }
 }
