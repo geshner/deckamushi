@@ -1,9 +1,8 @@
 package io.capistudio.deckamushi.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 
@@ -16,7 +15,8 @@ actual fun RemoteImage(
     AsyncImage(
         model = url,
         contentDescription = contentDescription,
-        modifier = modifier.background(Color.LightGray),
+        modifier = modifier,
+        contentScale = ContentScale.Fit,
         onState = { state ->
             when (state) {
                 is AsyncImagePainter.State.Error -> {
@@ -24,6 +24,7 @@ actual fun RemoteImage(
                     // (this still keeps the gray background, but you can print/log if needed)
                     println("Coil error: ${state.result.throwable.message}")
                 }
+
                 else -> Unit
             }
         }
