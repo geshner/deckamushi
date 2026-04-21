@@ -9,6 +9,7 @@ import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedTotalUseCase
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Action
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Effect
+import io.capistudio.deckamushi.presentation.collection.CollectionContract.Effect.*
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.State
 import io.capistudio.deckamushi.presentation.mvi.Mvi
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,13 @@ class CollectionViewModel(
     override suspend fun handleAction(action: Action) {
         when (action) {
             Action.OnStart -> updateTotalCount()
-            is Action.CardClicked -> emitEffect(Effect.NavigateToDetail(action.id))
+            is Action.CardClicked -> emitEffect(NavigateToDetail(action.id))
+            is Action.ScrollPositionChanged -> setState {
+                copy(
+                    scrollIndex = action.index,
+                    scrollOffset = action.offset
+                )
+            }
         }
     }
 

@@ -8,25 +8,21 @@ import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
-import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
 import io.capistudio.deckamushi.domain.util.onSuccess
-import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Action
-import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Effect
-import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.State
+import io.capistudio.deckamushi.presentation.cards.CardsListContract.Action
+import io.capistudio.deckamushi.presentation.cards.CardsListContract.Effect
+import io.capistudio.deckamushi.presentation.cards.CardsListContract.Effect.NavigateToDetail
+import io.capistudio.deckamushi.presentation.cards.CardsListContract.State
 import io.capistudio.deckamushi.presentation.mvi.Mvi
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-class CardsBrowserViewModel(
+class CardListViewModel(
     private val getCardsPageUseCase: GetCardsPageUseCase,
     private val getCardsCountUseCase: GetCardsCountUseCase,
     private val getCardsFoundByNameCountUseCase: GetCardsFoundByNameCountUseCase,
@@ -54,8 +50,14 @@ class CardsBrowserViewModel(
                 _query.value = query
                 updateTotalCount(query)
             }
-            Action.LoadMore -> {}//handled by library
-            is Action.CardClicked -> emitEffect(Effect.NavigateToDetail(action.id))
+
+            is Action.CardClicked -> emitEffect(NavigateToDetail(action.id))
+            is Action.ScrollPositionChanged -> setState {
+                copy(
+                    scrollIndex = action.index,
+                    scrollOffset = action.offset
+                )
+            }
         }
     }
 

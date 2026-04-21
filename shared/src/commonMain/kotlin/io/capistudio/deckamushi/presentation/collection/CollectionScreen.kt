@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,8 +29,10 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.OwnedCard
+import io.capistudio.deckamushi.presentation.cards.CardsListContract
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Action
 import io.capistudio.deckamushi.presentation.components.RemoteImage
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 @Composable
@@ -38,8 +42,21 @@ fun CollectionScreen(
     onAction: (Action) -> Unit,
 ) {
 
+    val gridState = rememberLazyGridState(
+        initialFirstVisibleItemIndex = state.scrollIndex,
+        initialFirstVisibleItemScrollOffset = state.scrollOffset
+    )
+
     LaunchedEffect(Unit) {
         onAction(Action.OnStart)
+    }
+
+    LaunchedEffect(gridState) {
+        snapshotFlow { gridState.firstVisibleItemIndex to gridState.firstVisibleItemScrollOffset }
+            .distinctUntilChanged()
+            .collect { (index, offset) ->
+                onAction(Action.ScrollPositionChanged(index, offset))
+            }
     }
 
     Column(
@@ -59,6 +76,7 @@ fun CollectionScreen(
         //            )
 
         LazyVerticalGrid(
+            state = gridState,
             columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(8.dp),
             modifier = Modifier.weight(1f)

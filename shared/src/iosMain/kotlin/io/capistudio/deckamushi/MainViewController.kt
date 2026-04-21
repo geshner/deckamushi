@@ -7,16 +7,7 @@ import io.capistudio.deckamushi.data.local.VersionCacheFactory
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.local.db.DatabaseDriverFactory
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
-import io.capistudio.deckamushi.di.AppDependencies
 import io.capistudio.deckamushi.di.initKoin
-import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
-import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
-import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
-import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
-import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
-import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
-import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
-import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
 
 fun MainViewController() = ComposeUIViewController {
     val cache = VersionCacheFactory().create()

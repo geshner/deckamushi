@@ -1,17 +1,19 @@
 package io.capistudio.deckamushi.presentation.collection
 
-import io.capistudio.deckamushi.domain.model.OwnedCard
-
 object CollectionContract {
 
     data class State(
         val totalCount: Long = 0,
-        val error: String? = null
+        val error: String? = null,
+        val scrollIndex: Int = 0,
+        val scrollOffset: Int = 0
     )
 
     sealed interface Action {
         data object OnStart : Action
         data class CardClicked(val id: String) : Action
+
+        data class ScrollPositionChanged(val index: Int, val offset: Int) : Action
     }
 
     sealed interface Effect {

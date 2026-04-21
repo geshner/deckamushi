@@ -12,16 +12,16 @@ fun CardListRoute(
     onNavigateToDetail: (String) -> Unit,
     showSnackbar: (String) -> Unit,
 ) {
-    val vm: CardsBrowserViewModel = koinViewModel()
+    val vm: CardListViewModel = koinViewModel()
     val state by vm.state.collectAsState()
     val pagingItems = vm.cardsPagingData.collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
         vm.effects.collect { effect ->
             when (effect) {
-                is CardsBrowserContract.Effect.NavigateToDetail ->
+                is CardsListContract.Effect.NavigateToDetail ->
                     onNavigateToDetail(effect.id)
-                is CardsBrowserContract.Effect.ShowMessage -> {
+                is CardsListContract.Effect.ShowMessage -> {
                     showSnackbar(effect.message)
                 }
             }

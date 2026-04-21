@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,19 +33,31 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.Card
-import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Action
+import io.capistudio.deckamushi.presentation.cards.CardsListContract.Action
 import io.capistudio.deckamushi.presentation.components.RemoteImage
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun CardListScreen(
-    state: CardsBrowserContract.State,
+    state: CardsListContract.State,
     onAction: (Action) -> Unit,
     pagingItems: LazyPagingItems<Card>,
 ) {
-    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState(
+        initialFirstVisibleItemIndex = state.scrollIndex,
+        initialFirstVisibleItemScrollOffset = state.scrollOffset
+    )
 
     LaunchedEffect(Unit) {
         onAction(Action.OnStart)
+    }
+
+    LaunchedEffect(gridState) {
+        snapshotFlow { gridState.firstVisibleItemIndex to gridState.firstVisibleItemScrollOffset }
+            .distinctUntilChanged()
+            .collect { (index, offset) ->
+                onAction(Action.ScrollPositionChanged(index, offset))
+            }
     }
 
     Column(
@@ -67,6 +80,7 @@ fun CardListScreen(
         Spacer(Modifier.height(16.dp))
 
         LazyVerticalGrid(
+            state = gridState,
             columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(8.dp),
             modifier = Modifier.weight(1f)

@@ -18,7 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
-import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
+import io.capistudio.deckamushi.presentation.cards.CardListViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionRoute
 import io.capistudio.deckamushi.presentation.components.DeckamushiTopAppBar
 import io.capistudio.deckamushi.presentation.detail.CardDetailRoute
@@ -77,7 +77,7 @@ fun App() {
                     }
 
                     composable<Screen.CardList> {
-                        koinViewModel<CardsBrowserViewModel>()
+                        koinViewModel<CardListViewModel>()
                         CardListRoute(
                             showSnackbar = showSnackbar,
                             onNavigateToDetail = { id ->

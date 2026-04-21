@@ -1,8 +1,6 @@
 package io.capistudio.deckamushi.presentation.cards
 
-import io.capistudio.deckamushi.domain.model.Card
-
-object CardsBrowserContract {
+object CardsListContract {
 
     data class State(
         val queryDraft: String = "",
@@ -17,8 +15,8 @@ object CardsBrowserContract {
         data object OnStart : Action
         data class QueryChanged(val value: String) : Action
         data object SearchClicked : Action
-        data object LoadMore : Action
         data class CardClicked(val id: String) : Action
+        data class ScrollPositionChanged(val index: Int, val offset: Int) : Action
     }
 
     sealed interface Effect {
