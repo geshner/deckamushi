@@ -6,12 +6,11 @@ object CardsBrowserContract {
 
     data class State(
         val queryDraft: String = "",
-        val isSearching: Boolean = false,
         val totalCount: Long? = null,
-        val cards: List<Card> = emptyList(),
-        val isAppending: Boolean = false,
-        val endReached: Boolean = false,
         val error: String? = null,
+
+        val scrollIndex: Int = 0,
+        val scrollOffset: Int = 0
     )
 
     sealed interface Action {

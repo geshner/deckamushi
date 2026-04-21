@@ -6,11 +6,10 @@ import io.capistudio.deckamushi.domain.usecase.DecrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
 import io.capistudio.deckamushi.domain.usecase.IncrementOwnedUseCase
+import io.capistudio.deckamushi.domain.util.onFailure
+import io.capistudio.deckamushi.domain.util.onSuccess
 import io.capistudio.deckamushi.presentation.detail.CardDetailContract.Effect
 import io.capistudio.deckamushi.presentation.mvi.Mvi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class CardDetailViewModel(
@@ -19,7 +18,7 @@ class CardDetailViewModel(
     private val getOwnedQuantityUseCase: GetOwnedQuantityUseCase,
     private val incrementOwnedUseCase: IncrementOwnedUseCase,
     private val decrementOwnedUseCase: DecrementOwnedUseCase,
-) : Mvi<CardDetailContract.State, CardDetailContract.Action, CardDetailContract.Effect>(
+) : Mvi<CardDetailContract.State, CardDetailContract.Action, Effect>(
     initialState = CardDetailContract.State(),
 ) {
 
@@ -33,6 +32,7 @@ class CardDetailViewModel(
                 decrementOwnedCount()
                 loadOwned()
             }
+
             CardDetailContract.Action.IncrementOwnedClick -> {
                 incrementOwnedCount()
                 loadOwned()
@@ -53,29 +53,37 @@ class CardDetailViewModel(
     }
 
     private suspend fun loadCardDetail() {
-        runCatching {
-            val card = getCardByIdUseCase(cardId)
-            setState { copy(
-                isLoading = false,
-                card = card,
-                error = null
-            ) }
-        }.onFailure { t ->
-            log.e(t) { "load card failed (id=$cardId)" }
-            setState { copy(isLoading = false, card = null, error = t.message ?: "Unknown error") }
-        }
+        getCardByIdUseCase(cardId)
+            .onSuccess { card -> setState { copy(isLoading = false, card = card, error = null) } }
+            .onFailure { msg, e ->
+                log.e(e) { "Load card failed (id=$cardId)" }
+                emitEffect(Effect.ShowMessage(msg))
+                setState { copy(isLoading = false, card = null, error = msg) }
+            }
     }
 
     private suspend fun loadOwned() {
-        val qty = getOwnedQuantityUseCase(cardId)
-        setState { copy(ownedQuantity = qty) }
+        getOwnedQuantityUseCase(cardId)
+            .onSuccess {
+                setState { copy(ownedQuantity = it) }
+            }
     }
 
     private suspend fun incrementOwnedCount() {
         incrementOwnedUseCase(cardId)
+            .onFailure { msg, e ->
+                log.e(e) { "failed to increment (id=$cardId)" }
+                emitEffect(Effect.ShowMessage(msg))
+                setState { copy(isLoading = false, error = msg) }
+            }
     }
 
     private suspend fun decrementOwnedCount() {
         decrementOwnedUseCase(cardId)
+            .onFailure { msg, e ->
+                log.e(e) { "failed to decrement (id=$cardId)" }
+                emitEffect(Effect.ShowMessage(msg))
+                setState { copy(isLoading = false, error = msg) }
+            }
     }
 }

@@ -9,6 +9,7 @@ import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
 import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
+import io.capistudio.deckamushi.domain.util.onSuccess
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Action
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.Effect
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserContract.State
@@ -28,7 +29,6 @@ import kotlinx.coroutines.launch
 class CardsBrowserViewModel(
     private val getCardsPageUseCase: GetCardsPageUseCase,
     private val getCardsCountUseCase: GetCardsCountUseCase,
-    private val searchCardByNameUseCase: SearchCardByNameUseCase,
     private val getCardsFoundByNameCountUseCase: GetCardsFoundByNameCountUseCase,
 ) : Mvi<State, Action, Effect>(
     initialState = State(),
@@ -61,9 +61,14 @@ class CardsBrowserViewModel(
 
     private fun updateTotalCount(query: String) {
         viewModelScope.launch {
-            val count = if (query.isBlank()) {
+            var count = 0L
+            if (query.isBlank()) {
                 getCardsCountUseCase()
-            } else getCardsFoundByNameCountUseCase(query)
+                    .onSuccess { count = it }
+            } else {
+                getCardsFoundByNameCountUseCase(query)
+                    .onSuccess { count = it }
+            }
 
             setState { copy(totalCount = count) }
         }

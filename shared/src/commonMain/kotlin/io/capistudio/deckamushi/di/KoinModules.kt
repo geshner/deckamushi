@@ -1,8 +1,6 @@
 package io.capistudio.deckamushi.di
 
 import io.capistudio.deckamushi.core.network.createHttpClient
-import io.capistudio.deckamushi.data.local.VersionCache
-import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
@@ -15,15 +13,18 @@ import io.capistudio.deckamushi.domain.usecase.GetOwnedCardsUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedTotalUseCase
 import io.capistudio.deckamushi.domain.usecase.IncrementOwnedUseCase
-import io.capistudio.deckamushi.domain.usecase.SearchCardByNameUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardsBrowserViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionViewModel
 import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.sync.SyncViewModel
-import org.koin.core.module.dsl.*
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
@@ -44,7 +45,6 @@ private val sharedModule = module {
     factoryOf(::GetCardsCountUseCase)
     factoryOf(::GetCardsFoundByNameCountUseCase)
     factoryOf(::GetCardsPageUseCase)
-    factoryOf(::SearchCardByNameUseCase)
     factoryOf(::GetOwnedQuantityUseCase)
     factoryOf(::IncrementOwnedUseCase)
     factoryOf(::DecrementOwnedUseCase)
