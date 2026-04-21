@@ -14,4 +14,8 @@ sealed interface Screen {
     data object Collection: Screen
     @Serializable
     data class CardDetail(val id: String) : Screen
+    @Serializable
+    data object Scanner : Screen
+    @Serializable
+    data class ScanResults(val baseId: String) : Screen
 }

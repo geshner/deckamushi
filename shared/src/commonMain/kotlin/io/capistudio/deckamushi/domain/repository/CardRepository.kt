@@ -1,10 +1,10 @@
 package io.capistudio.deckamushi.domain.repository
 
 import androidx.paging.PagingSource
+import app.cash.sqldelight.paging3.QueryPagingSource
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.OwnedCard
-import app.cash.sqldelight.paging3.QueryPagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -20,6 +20,7 @@ interface CardRepository {
     suspend fun getOwnedCards(limit: Int, offset: Int): List<OwnedCard>
     suspend fun getOwnedTotal(): Long
     fun getOwnedCardsPagingSource(): PagingSource<Int, OwnedCard>
+    suspend fun getCardsByBaseId(baseId: String): List<Card>
 }
 
 class CardRepositoryImpl(
@@ -142,5 +143,21 @@ class CardRepositoryImpl(
                 )
             }
         )
+    }
+
+    override suspend fun getCardsByBaseId(baseId: String): List<Card> {
+        val results = db.cardQueries.getCardsByBaseId(baseId)
+            .executeAsList()
+            .map { r ->
+                Card(
+                    id = r.id,
+                    baseId = r.base_id,
+                    variant = r.variant,
+                    name = r.name,
+                    imageUrl = r.image_url,
+                )
+            }
+
+        return results
     }
 }

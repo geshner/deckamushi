@@ -24,6 +24,8 @@ import io.capistudio.deckamushi.presentation.components.DeckamushiTopAppBar
 import io.capistudio.deckamushi.presentation.detail.CardDetailRoute
 import io.capistudio.deckamushi.presentation.home.HomeScreen
 import io.capistudio.deckamushi.presentation.navigation.Screen
+import io.capistudio.deckamushi.presentation.scan.ScanResultsRoute
+import io.capistudio.deckamushi.presentation.scan.ScanRoute
 import io.capistudio.deckamushi.presentation.sync.SyncRoute
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -43,6 +45,8 @@ fun App() {
         currentDestination?.hasRoute<Screen.Collection>() == true -> "My Collection"
         currentDestination?.hasRoute<Screen.Sync>() == true -> "Sync Data"
         currentDestination?.hasRoute<Screen.CardDetail>() == true -> "Card Detail"
+        currentDestination?.hasRoute<Screen.Scanner>() == true -> ""
+        currentDestination?.hasRoute<Screen.ScanResults>() == true -> "Pick your card"
         else -> "Deckamushi"
     }
 
@@ -73,6 +77,7 @@ fun App() {
                             onOpenCards = { navController.navigate(Screen.CardList) },
                             onOpenCollection = { navController.navigate(Screen.Collection) },
                             onOpenSync = { navController.navigate(Screen.Sync) },
+                            onOpenScanner = { navController.navigate(Screen.Scanner) },
                         )
                     }
 
@@ -108,6 +113,28 @@ fun App() {
                             cardId = detail.id,
                             showSnackbar = showSnackbar,
                             onBack = { navController.popBackStack() },
+                        )
+                    }
+
+                    composable<Screen.Scanner> {
+                        ScanRoute(
+                            showSnackbar = showSnackbar,
+                            onNavigateToDetail = { id ->
+                                navController.navigate(Screen.CardDetail(id))
+                            },
+                            onNavigateToResults = { baseId ->
+                                navController.navigate(Screen.ScanResults(baseId))
+                            }
+                        )
+                    }
+
+                    composable<Screen.ScanResults> { backStackEntry ->
+                        val route = backStackEntry.toRoute<Screen.ScanResults>()
+                        ScanResultsRoute(
+                            baseId = route.baseId,
+                            onNavigateToDetail = { id ->
+                                navController.navigate(Screen.CardDetail(id))
+                            }
                         )
                     }
                 }

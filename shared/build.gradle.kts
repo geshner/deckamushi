@@ -83,6 +83,11 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.coil)
             implementation(libs.coil.okhttp)
+            implementation(libs.androidx.camera)
+            implementation(libs.androidx.camera.lifecycle)
+            implementation(libs.androidx.camera.view)
+            implementation(libs.text.recognition)
+            implementation(libs.google.accompanist)
         }
 
         iosMain.dependencies {

@@ -29,7 +29,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.OwnedCard
-import io.capistudio.deckamushi.presentation.cards.CardsListContract
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Action
 import io.capistudio.deckamushi.presentation.components.RemoteImage
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -87,9 +86,7 @@ fun CollectionScreen(
             ) { index ->
                 val card = pagingItems[index]
                 if (card != null) {
-                    Box(
-
-                    ) {
+                    Box {
 
                         RemoteImage(
                             url = card.imageUrl,
@@ -103,12 +100,12 @@ fun CollectionScreen(
                                     onAction(Action.CardClicked(card.id))
                                 }
                         )
-                        Surface (
+                        Surface(
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
                             shape = CircleShape,
                             modifier = Modifier.align(Alignment.BottomEnd)
                                 .padding(8.dp)
-                        ){
+                        ) {
 
                             Text(
                                 text = "x${card.ownedQuantity}",

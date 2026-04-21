@@ -6,6 +6,7 @@ import io.capistudio.deckamushi.domain.repository.CardRepository
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
 import io.capistudio.deckamushi.domain.usecase.DecrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
+import io.capistudio.deckamushi.domain.usecase.GetCardsByBaseIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
@@ -17,6 +18,8 @@ import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardListViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionViewModel
 import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
+import io.capistudio.deckamushi.presentation.scan.ScanResultsViewModel
+import io.capistudio.deckamushi.presentation.scan.ScanViewModel
 import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -51,6 +54,7 @@ private val sharedModule = module {
     factoryOf(::UpdateCardDataUseCase)
     factoryOf(::GetOwnedCardsUseCase)
     factoryOf(::GetOwnedTotalUseCase)
+    factoryOf(::GetCardsByBaseIdUseCase)
 
     // ViewModels
     viewModelOf(::CardListViewModel)
@@ -64,6 +68,15 @@ private val sharedModule = module {
             getOwnedQuantityUseCase = get(),
             incrementOwnedUseCase = get(),
             decrementOwnedUseCase = get()
+        )
+    }
+
+    viewModelOf(::ScanViewModel)
+
+    viewModel { (baseId: String) ->
+        ScanResultsViewModel(
+            baseId = baseId,
+            getCardsByBaseIdUseCase = get()
         )
     }
 }

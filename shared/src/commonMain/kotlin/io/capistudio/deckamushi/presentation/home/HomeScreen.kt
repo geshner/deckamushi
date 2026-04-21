@@ -16,6 +16,7 @@ fun HomeScreen(
     onOpenCards: () -> Unit,
     onOpenCollection: () -> Unit,
     onOpenSync: () -> Unit,
+    onOpenScanner: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -25,5 +26,6 @@ fun HomeScreen(
         Button(onClick = onOpenCards) { Text("All Cards") }
         Button(onClick = onOpenCollection) { Text("My Collection") }
         Button(onClick = onOpenSync) { Text("Sync Data") }
+        Button(onClick = onOpenScanner) { Text("Scanner") }
     }
 }

@@ -86,3 +86,9 @@ JOIN collection col
     ON col.card_id = c.id
 ORDER BY c.base_id, c.variant
 LIMIT :limit OFFSET :offset;
+
+getCardsByBaseId:
+SELECT *
+FROM cards
+WHERE base_id = :baseId
+ORDER BY variant;
