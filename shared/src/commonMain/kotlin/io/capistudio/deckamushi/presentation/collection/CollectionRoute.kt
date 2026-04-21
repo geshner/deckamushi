@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.paging.compose.collectAsLazyPagingItems
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -29,6 +30,7 @@ fun CollectionRoute(
 
     CollectionScreen(
         state = state,
+        pagingItems = vm.ownedCardsPagingData.collectAsLazyPagingItems(),
         onAction = vm::dispatch
     )
 }

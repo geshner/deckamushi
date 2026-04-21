@@ -2,6 +2,7 @@ package io.capistudio.deckamushi.presentation.collection
 
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.cachedIn
 import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.usecase.GetOwnedCardsUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
@@ -23,87 +24,23 @@ class CollectionViewModel(
 ) {
     private val log = Logger.withTag("CollectionVM")
 
-    private val pageSize =50
-    private var offset =0
-
-    private var loadingJob: Job? = null
+    val ownedCardsPagingData = getOwnedCardsUseCase()
+        .cachedIn(viewModelScope)
 
     override suspend fun handleAction(action: Action) {
         when (action) {
-            Action.OnStart -> {
-                if (state.value.cards.isEmpty()) {
-                    loadOwned()
-                }
-            }
-            Action.LoadMore -> loadMore()
+            Action.OnStart -> updateTotalCount()
             is Action.CardClicked -> emitEffect(Effect.NavigateToDetail(action.id))
         }
     }
 
-    private suspend fun loadOwned() {
-        if (loadingJob?.isActive == true) return
-
-        offset = 0
-        setState { copy(
-            isAppending = false,
-            endReached = false,
-            error = null
-        ) }
-
-        loadingJob = viewModelScope.launch {
+    private fun updateTotalCount() {
+        viewModelScope.launch {
             runCatching {
-                val page = getOwnedCardsUseCase(pageSize, offset)
                 val count = getOwnedTotalUseCase()
-
-                val endReachedNow = page.size < pageSize
-                offset += page.size
-
-
-                setState { copy(
-                    cards = page,
-                    totalCount = count,
-                    endReached = endReachedNow,
-                    error = null,
-                )}
+                setState { copy(totalCount = count) }
             }.onFailure { e ->
-                log.e(e) { "loadOwned failed" }
-                setState {
-                    copy(error = e.message ?: "Unknow error")
-                }
-            }
-        }
-    }
-
-    private suspend fun loadMore() {
-        val s = state.value
-
-        if (s.isAppending || s.endReached) return
-        if (s.cards.isEmpty()) return
-        if (loadingJob?.isActive == true) return
-
-        setState { copy(isAppending = true, error = null) }
-
-        loadingJob = viewModelScope.launch {
-            runCatching {
-                val page = getOwnedCardsUseCase(pageSize, offset)
-
-
-                val endReachedNow = page.size < pageSize
-                offset += page.size
-
-                setState {
-                    copy(
-                        isAppending = false,
-                        cards = cards + page,
-                        endReached = endReachedNow,
-                        error = null
-                    )
-                }
-            }.onFailure { e ->
-                log.e(e) { "loadMore failed" }
-                setState {
-                    copy(isAppending = false, error = e.message ?: "Unknow error")
-                }
+                log.e(e) { "updateTotalCount failed" }
             }
         }
     }

@@ -1,8 +1,12 @@
 package io.capistudio.deckamushi.domain.repository
 
+import androidx.paging.PagingSource
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.OwnedCard
+import app.cash.sqldelight.paging3.QueryPagingSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 
 interface CardRepository {
     suspend fun getCardById(id: String): Card?
@@ -15,6 +19,7 @@ interface CardRepository {
     suspend fun decrementOwned(cardId: String)
     suspend fun getOwnedCards(limit: Int, offset: Int): List<OwnedCard>
     suspend fun getOwnedTotal(): Long
+    fun getOwnedCardsPagingSource(): PagingSource<Int, OwnedCard>
 }
 
 class CardRepositoryImpl(
@@ -113,5 +118,29 @@ class CardRepositoryImpl(
 
     override suspend fun getOwnedTotal(): Long {
         return db.collectionQueries.getOwnedTotal().executeAsOneOrNull() ?: 0L
+    }
+
+    override fun getOwnedCardsPagingSource(): PagingSource<Int, OwnedCard> {
+        return QueryPagingSource(
+            countQuery = db.collectionQueries.getOwnedTotal(),
+            transacter = db.collectionQueries,
+            context = Dispatchers.IO,
+            queryProvider = { limit, offset ->
+                db.cardQueries.getOwnedCards(
+                    limit = limit,
+                    offset = offset,
+                    mapper = { id: String, baseId: String, variant: String?, name: String, color_flags: Long, rarity_id: Long, card_category: String, attack_power: Long?, counter_power: Long?, life: Long?, combat_attribute: String?, feature: String?, card_text: String?, block_icon_code: String?, pack_name: String?, imageUrl: String?, ownedQuantity: Long ->
+                        OwnedCard(
+                            id = id,
+                            baseId = baseId,
+                            variant = variant,
+                            name = name,
+                            imageUrl = imageUrl,
+                            ownedQuantity = ownedQuantity
+                        )
+                    }
+                )
+            }
+        )
     }
 }

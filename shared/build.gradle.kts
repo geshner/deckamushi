@@ -55,6 +55,7 @@ kotlin {
             // SQLDelight
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines.extensions)
+            implementation(libs.sqldelight.paging)
 
             // Networking / Serialization
             implementation(libs.ktor.client.core)

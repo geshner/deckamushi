@@ -2,38 +2,31 @@ package io.capistudio.deckamushi.presentation.collection
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
+import io.capistudio.deckamushi.domain.model.OwnedCard
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Action
 import io.capistudio.deckamushi.presentation.components.RemoteImage
 
@@ -41,121 +34,99 @@ import io.capistudio.deckamushi.presentation.components.RemoteImage
 @Composable
 fun CollectionScreen(
     state: CollectionContract.State,
+    pagingItems: LazyPagingItems<OwnedCard>,
     onAction: (Action) -> Unit,
 ) {
-    val listState = rememberLazyListState()
-    val lastLoadMoreRequestedAtSize = rememberSaveable { mutableIntStateOf(-1) }
-
 
     LaunchedEffect(Unit) {
         onAction(Action.OnStart)
     }
 
-//    LaunchedEffect(state.isSearching) {
-//        if (state.isSearching) listState.scrollToItem(0)
-//    }
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        //            OutlinedTextField(
+        //                value = state.queryDraft,
+        //                onValueChange = { onAction(Action.QueryChanged(it)) },
+        //                label = { Text("Search by name") },
+        //                singleLine = true,
+        //                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        //                keyboardActions = KeyboardActions(
+        //                    onSearch = {
+        //                        onAction(Action.SearchClicked)
+        //                    }
+        //                ),
+        //            )
 
-    val shouldLoadMore by remember {
-        derivedStateOf {
-//            if (state.isSearching || state.isAppending || state.endReached) return@derivedStateOf false
-            if (state.isAppending || state.endReached) return@derivedStateOf false
-            if (state.error != null) return@derivedStateOf false
-            if (state.cards.isEmpty()) return@derivedStateOf false
-
-            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                ?: return@derivedStateOf false
-            val lastCardIndex = state.cards.lastIndex
-            val lastVisibleCardIndex = minOf(lastVisible, lastCardIndex) // ignore footer if visible
-
-            val prefetchDistance = 10
-            lastVisibleCardIndex >= (lastCardIndex - prefetchDistance).coerceAtLeast(0)
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore, state.cards.size) {
-        if (!shouldLoadMore) return@LaunchedEffect
-        if (lastLoadMoreRequestedAtSize.intValue == state.cards.size) return@LaunchedEffect
-
-        lastLoadMoreRequestedAtSize.intValue = state.cards.size
-        onAction(Action.LoadMore)
-    }
-
-    Scaffold(
-        modifier = Modifier.safeContentPadding(),
-        topBar = {
-//            OutlinedTextField(
-//                value = state.queryDraft,
-//                onValueChange = { onAction(Action.QueryChanged(it)) },
-//                label = { Text("Search by name") },
-//                singleLine = true,
-//                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-//                keyboardActions = KeyboardActions(
-//                    onSearch = {
-//                        onAction(Action.SearchClicked)
-//                    }
-//                ),
-//            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .padding(padding)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = PaddingValues(8.dp),
+            modifier = Modifier.weight(1f)
         ) {
-            Text(
-                text = "Cards ${state.cards.size}${state.totalCount?.let { " / $it" } ?: ""}",
-                style = MaterialTheme.typography.titleMedium,
-            )
+            items(
+                count = pagingItems.itemCount,
+                key = pagingItems.itemKey { it.id }
+            ) { index ->
+                val card = pagingItems[index]
+                if (card != null) {
+                    Box(
 
-            state.error?.let {
-                Text("Error: $it", color = MaterialTheme.colorScheme.error)
-                Spacer(Modifier.height(8.dp))
-            }
-
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                state = listState
-            ) {
-                items(state.cards, key = { it.id }) { card ->
-                    Card(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable(true) {
-                                onAction(Action.CardClicked(card.id))
-                            }
                     ) {
+
                         RemoteImage(
                             url = card.imageUrl,
                             contentDescription = card.name,
                             modifier = Modifier
-                                .height(70.dp)
+                                .fillMaxWidth()
                                 .aspectRatio(0.716f)
                                 .clip(MaterialTheme.shapes.medium)
+                                .padding(8.dp)
+                                .clickable(true) {
+                                    onAction(Action.CardClicked(card.id))
+                                }
                         )
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = card.name
-                        )
+                        Surface (
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
+                            shape = CircleShape,
+                            modifier = Modifier.align(Alignment.BottomEnd)
+                                .padding(8.dp)
+                        ){
+
+                            Text(
+                                text = "x${card.ownedQuantity}",
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
                     }
                 }
+            }
 
-                if (state.cards.isNotEmpty() || state.isAppending) {
-                    item(key = "footer") {
-                        Spacer(Modifier.height(8.dp))
-
-                        if (state.isAppending) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.width(64.dp),
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                                )
-                            }
-                        }
-                        Spacer(Modifier.height(12.dp))
+            // 2. Loading State (Initial)
+            if (pagingItems.loadState.refresh is LoadState.Loading) {
+                item {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
+                }
+            }
+
+            // 3. Appending State (Bottom Loading)
+            if (pagingItems.loadState.append is LoadState.Loading) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+
+            // 4. Error State
+            if (pagingItems.loadState.refresh is LoadState.Error) {
+                item {
+                    Text("Error loading cards", color = MaterialTheme.colorScheme.error)
                 }
             }
         }
