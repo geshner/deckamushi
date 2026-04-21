@@ -8,5 +8,7 @@ actual fun ScanRoute(
     onNavigateToDetail: (String) -> Unit,
     onNavigateToResults: (String) -> Unit,
 ) {
-    CameraPreview() // already shows "Scanner not available on this platform"
+    CameraPreview(
+        onTextDetected = { }
+    ) // already shows "Scanner not available on this platform"
 }
