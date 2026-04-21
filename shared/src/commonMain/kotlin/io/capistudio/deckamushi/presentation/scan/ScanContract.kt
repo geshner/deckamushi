@@ -6,7 +6,6 @@ object ScanContract {
         val isScanning: Boolean = false,
         val permissionGranted: Boolean = false,
         val isProcessing: Boolean = false,
-        val lastRawText: String? = null
     )
 
     sealed interface Action {

@@ -1,7 +1,6 @@
 package io.capistudio.deckamushi.presentation.scan
 
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.usecase.GetCardsByBaseIdUseCase
 import io.capistudio.deckamushi.domain.util.DomainResult
 import io.capistudio.deckamushi.presentation.mvi.Mvi
@@ -14,7 +13,6 @@ class ScanViewModel(
     initialState = ScanContract.State()
 ) {
 
-    private val logger = Logger.withTag("vm")
     private var lastMatchedId: String? = null
     private var consecutiveCount: Int = 0
     private var cooldownActive: Boolean = false
@@ -48,7 +46,6 @@ class ScanViewModel(
     }
 
     private suspend fun processRawText(text: String) {
-        setState { copy(lastRawText = text) }
         val normalized = extractAndNormalize(text) ?: run {
             resetThreshold()
             return
@@ -74,7 +71,7 @@ class ScanViewModel(
                 when {
                     cards.isEmpty() -> {
                         applyCooldown()
-                        emitEffect(ScanContract.Effect.ShowMessage("Card not found: $baseId, len: ${baseId.length}"))
+                        emitEffect(ScanContract.Effect.ShowMessage("Card not found: $baseId"))
                     }
 
                     cards.size == 1 -> {
@@ -110,23 +107,37 @@ class ScanViewModel(
         if (dashIdx == -1) return null
 
         val prefix = candidate.substring(0, dashIdx)
-        val suffix = candidate.substring(dashIdx+1)
+        val suffix = candidate.substring(dashIdx + 1)
 
         // Post-dash: always digits — fix O→0, I→1
         val fixedSuffix = suffix.map { c ->
-            when (c) { 'O' -> '0'; 'I' -> '1'; else -> c }
+            when (c) {
+                'O' -> '0'; 'I' -> '1'; else -> c
+            }
         }.joinToString("")
 
         // Pre-dash: split by pattern
         val fixedPrefix = if (prefix.length == 1) {
             // L-DDD pattern: single letter, no digit zone
-            prefix.map { c -> when (c) { '0' -> 'O'; '1' -> 'I'; else -> c } }.joinToString("")
+            prefix.map { c ->
+                when (c) {
+                    '0' -> 'O'; '1' -> 'I'; else -> c
+                }
+            }.joinToString("")
         } else {
             // LLDD or LLLDD: leading chars are letters, last 2 are digits
             val letterPart = prefix.dropLast(2)
             val digitPart = prefix.takeLast(2)
-            val fixedLetters = letterPart.map { c -> when (c) { '0' -> 'O'; '1' -> 'I'; else -> c } }.joinToString("")
-            val fixedDigits = digitPart.map { c -> when (c) { 'O' -> '0'; 'I' -> '1'; else -> c } }.joinToString("")
+            val fixedLetters = letterPart.map { c ->
+                when (c) {
+                    '0' -> 'O'; '1' -> 'I'; else -> c
+                }
+            }.joinToString("")
+            val fixedDigits = digitPart.map { c ->
+                when (c) {
+                    'O' -> '0'; 'I' -> '1'; else -> c
+                }
+            }.joinToString("")
             "$fixedLetters$fixedDigits"
         }
 
@@ -140,9 +151,11 @@ class ScanViewModel(
 
     private fun applyCooldown() {
         cooldownActive = true
+        setState { copy(isScanning = false) } // <- stops camera immediately on match
         viewModelScope.launch {
             delay(1500L)
             cooldownActive = false
+            setState { copy(isScanning = true) } // <- restores camera after cooldown
         }
     }
 }

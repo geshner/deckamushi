@@ -66,9 +66,31 @@ actual fun CameraPreview(
 
                                 recognizer.process(image)
                                     .addOnSuccessListener { result ->
+                                        val imageWidth = mediaImage.width.toFloat()
+                                        val imageHeight = mediaImage.height.toFloat()
+
+                                        //Center crop zone: middle 70%Width, middle 30% height
+                                        val cropLeft = imageWidth * 0.15f
+                                        val cropRight = imageWidth * 0.85f
+                                        val cropTop = imageWidth * 0.35f
+                                        val cropBottom = imageWidth * 0.65f
+
+                                        val croppedText = result.textBlocks
+                                            .filter{ block ->
+                                                val box = block.boundingBox ?: return@filter false
+                                                box.left >= cropLeft && box.right <= cropRight &&
+                                                        box.top >= cropTop && box.bottom <= cropBottom
+                                            }
+                                            .joinToString(" ") { it.text }
+                                        if (croppedText.isNotBlank()) {
+                                            onTextDetected(croppedText)
+                                        }
+
+                                        /** Last working card scan onsuccessListener content
                                         if (result.text.isNotBlank()) {
                                             onTextDetected(result.text)
                                         }
+                                        */
                                     }
                                     .addOnCompleteListener { imageProxy.close() }
                             } else {

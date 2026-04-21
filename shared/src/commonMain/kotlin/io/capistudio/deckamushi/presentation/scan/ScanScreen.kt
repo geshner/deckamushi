@@ -28,18 +28,19 @@ fun ScanScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        //camera preview fills the whole background
-        cameraPreview { text ->
-            onAction(ScanContract.Action.OnRawTextDetected(text))
+        if (state.isScanning) {
+            //camera preview fills the whole background
+            cameraPreview { text ->
+                onAction(ScanContract.Action.OnRawTextDetected(text))
+            }
         }
 
         // Crop overlay hint
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .aspectRatio(2.5f)
-                .align(Alignment.BottomEnd)
-                .padding(end = 24.dp, bottom = 48.dp)
+                .fillMaxWidth(0.7f)
+                .aspectRatio(4f)
+                .align(Alignment.Center)
                 .border(
                     width = 2.dp,
                     color = Color.White,
