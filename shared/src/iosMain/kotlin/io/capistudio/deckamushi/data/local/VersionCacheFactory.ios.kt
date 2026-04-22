@@ -2,8 +2,8 @@ package io.capistudio.deckamushi.data.local
 
 import platform.Foundation.NSUserDefaults
 
-actual class VersionCacheFactory {
-    actual fun create(): VersionCache = IosVersionCache()
+class VersionCacheFactory {
+    fun create(): VersionCache = IosVersionCache()
 }
 
 private class IosVersionCache(

@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6B38D1A42F9925F000A69074 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B38D1A32F9925F000A69074 /* libsqlite3.tbd */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		59AE6FB8395B13A22B673352 /* Deckamushi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Deckamushi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B38D1A32F9925F000A69074 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B38D1A42F9925F000A69074 /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,8 +58,17 @@
 			children = (
 				C4C309BC65C85A798EC1F283 /* Configuration */,
 				42EDC473E5AC428C5BE65835 /* iosApp */,
+				6B38D1A22F9925EF00A69074 /* Frameworks */,
 				EA3620059C31AB78C499DA75 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		6B38D1A22F9925EF00A69074 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6B38D1A32F9925F000A69074 /* libsqlite3.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		EA3620059C31AB78C499DA75 /* Products */ = {

@@ -1,9 +1,9 @@
 package io.capistudio.deckamushi.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 
 @Composable
 actual fun RemoteImage(
@@ -11,9 +11,10 @@ actual fun RemoteImage(
     contentDescription: String?,
     modifier: Modifier,
 ) {
-    // Placeholder for now (keeps iOS compiling).
-    // Later we can plug Kamel or another KMP image loader.
-    androidx.compose.foundation.layout.Box(
-        modifier = modifier.background(Color.LightGray)
+    AsyncImage(
+        model = url,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        contentScale = ContentScale.Fit
     )
 }
