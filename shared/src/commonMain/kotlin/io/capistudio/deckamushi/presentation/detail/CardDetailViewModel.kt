@@ -12,6 +12,13 @@ import io.capistudio.deckamushi.presentation.detail.CardDetailContract.Effect
 import io.capistudio.deckamushi.presentation.mvi.Mvi
 import kotlinx.coroutines.launch
 
+/**
+ * Drives the card detail screen and owned-quantity mutations.
+ *
+ * `fromScan` is not just navigation metadata: it changes back behavior. When detail was opened
+ * from the scanner flow and the user changes owned quantity, backing out skips `ScanResults`
+ * and returns directly to `Scanner` to support repeated scanning.
+ */
 class CardDetailViewModel(
     private val cardId: String,
     private val fromScan: Boolean,
@@ -28,6 +35,8 @@ class CardDetailViewModel(
     override suspend fun handleAction(action: CardDetailContract.Action) {
         when (action) {
             CardDetailContract.Action.BackClicked -> {
+                // Only scan-origin detail screens can skip ScanResults. Normal browsing flows
+                // should continue using regular back navigation.
                 val effect = if (state.value.quantityChanged && fromScan)
                     Effect.NavigateBackSkipScanResults
                 else
@@ -38,12 +47,15 @@ class CardDetailViewModel(
             CardDetailContract.Action.DecrementOwnedClick -> {
                 decrementOwnedCount()
                 loadOwned()
+                // Once quantity changes, scan-origin back should return directly to Scanner.
                 setState { copy(quantityChanged = true) }
             }
 
             CardDetailContract.Action.IncrementOwnedClick -> {
                 incrementOwnedCount()
                 loadOwned()
+                // Same rule as decrement: this marks the detail screen as "work completed" in
+                // scan flow so the variant picker does not need to be shown again on back.
                 setState { copy(quantityChanged = true) }
             }
         }

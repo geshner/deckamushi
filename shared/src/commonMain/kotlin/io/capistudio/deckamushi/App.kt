@@ -32,6 +32,13 @@ import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 
+/**
+ * Shared app shell for Deckamushi.
+ *
+ * Owns the typed navigation graph, top app bar state, and global snackbar host. It also keeps
+ * the scan-specific back override used by `CardDetailRoute` so app-bar back can participate in
+ * the same special back behavior as system back gestures.
+ */
 @Composable
 fun App() {
     val navController = rememberNavController()
@@ -56,6 +63,8 @@ fun App() {
     val showSnackbar: (String) -> Unit = { message ->
         scope.launch { snackbarHostState.showSnackbar(message) }
     }
+    // Allows a route to temporarily replace default app-bar back behavior without moving
+    // navigation logic into the top app bar itself. Currently used by CardDetail scan flow.
     val backOverride = remember { mutableStateOf<(() -> Unit)?>(null)  }
 
     MaterialTheme {
@@ -66,6 +75,8 @@ fun App() {
                     title = title,
                     canGoBack = canGoBack,
                     onBackClick = {
+                        // Prefer route-specific back handling when present; otherwise perform the
+                        // normal one-step back stack pop.
                         backOverride.value?.invoke() ?: navController.popBackStack()
                     },
                 )
@@ -117,9 +128,13 @@ fun App() {
                             cardId = detail.id,
                             fromScan = detail.fromScan,
                             showSnackbar = showSnackbar,
+                            // CardDetail registers a temporary back handler here so app-bar back
+                            // follows the same scan-aware rules as gesture/system back.
                             onRegisterBackOverride = { handler -> backOverride.value = handler },
                             onBack = { navController.popBackStack() },
                             onBackSkipScanResults = {
+                                // When detail came from scan flow and quantity changed, return
+                                // directly to Scanner instead of re-showing ScanResults.
                                 if (!navController.popBackStack<Screen.ScanResults>(inclusive = true)) {
                                     navController.popBackStack()
                                 }

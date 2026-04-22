@@ -9,11 +9,20 @@ import io.capistudio.deckamushi.presentation.components.PlatformBackHandler
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
+/**
+ * Route wrapper for card detail.
+ *
+ * `fromScan` enables scan-aware back behavior. When provided, both app-bar back and system back
+ * are routed through the viewmodel so it can decide whether to return normally or skip
+ * `ScanResults` and go straight back to `Scanner`.
+ */
 @Composable
 fun CardDetailRoute(
     cardId: String,
     fromScan: Boolean = false,
     showSnackbar: (String) -> Unit,
+    // Lets the app shell temporarily replace the top-app-bar back action while this route is on
+    // screen. This is cleared automatically when the route leaves composition.
     onRegisterBackOverride: ((() -> Unit)?) -> Unit = {},
     onBack: () -> Unit,
     onBackSkipScanResults: () -> Unit = onBack,
@@ -21,12 +30,13 @@ fun CardDetailRoute(
     val vm: CardDetailViewModel = koinInject { parametersOf(cardId, fromScan) }
     val state by vm.state.collectAsState()
 
-    // Register our ViewModel-aware back handler into the top bar, clean up on leave
+    // Register our ViewModel-aware back handler into the top bar, clean up on leave.
     DisposableEffect(Unit) {
       onRegisterBackOverride { vm.dispatch(CardDetailContract.Action.BackClicked) }
       onDispose { onRegisterBackOverride(null) }
     }
 
+    // Mirrors the same scan-aware back behavior for gesture/system back.
     PlatformBackHandler {
         vm.dispatch(CardDetailContract.Action.BackClicked)
     }

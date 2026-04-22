@@ -13,10 +13,17 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+/**
+ * Creates the platform-specific Ktor client engine.
+ *
+ * The engine differs by platform (for example OkHttp vs Darwin), but all clients are expected to
+ * apply [commonConfig] so timeout, serialization, and logging behavior stay consistent.
+ */
 expect fun createHttpClient(): HttpClient
 
 private val TIMEOUT_MILLIS = 30_000L
 
+/** Applies shared Ktor configuration used by all platform engines. */
 fun HttpClientConfig<*>.commonConfig() {
     install(HttpTimeout) {
         requestTimeoutMillis = TIMEOUT_MILLIS

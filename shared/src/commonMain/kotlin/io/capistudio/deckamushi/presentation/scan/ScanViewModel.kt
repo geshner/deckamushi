@@ -7,6 +7,16 @@ import io.capistudio.deckamushi.presentation.mvi.Mvi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Orchestrates the scanner flow after raw OCR text leaves the platform camera layer.
+ *
+ * This viewmodel is intentionally responsible for the project-specific heuristics that turn
+ * noisy OCR text into a `base_id` lookup:
+ * - extract a loose candidate from raw OCR text
+ * - normalize common OCR mistakes (`O/0`, `I/1`) based on known card-id structure
+ * - require 3 consecutive matches before lookup
+ * - pause scanning briefly after a match to avoid duplicate navigation/events
+ */
 class ScanViewModel(
     private val getCardsByBaseIdUseCase: GetCardsByBaseIdUseCase,
 ) : Mvi<ScanContract.State, ScanContract.Action, ScanContract.Effect>(
@@ -45,6 +55,10 @@ class ScanViewModel(
         }
     }
 
+    /**
+     * Debounces OCR noise by requiring the same normalized id to appear in 3 consecutive reads.
+     * Any non-match resets the threshold so we do not navigate on a single lucky frame.
+     */
     private suspend fun processRawText(text: String) {
         val normalized = extractAndNormalize(text) ?: run {
             resetThreshold()
@@ -62,6 +76,12 @@ class ScanViewModel(
         }
     }
 
+    /**
+     * Routes scan results by base id:
+     * - 0 matches -> user feedback
+     * - 1 match -> detail screen
+     * - many matches -> variant picker screen
+     */
     private suspend fun lookupCard(baseId: String) {
         setState { copy(isProcessing = true) }
 
@@ -96,7 +116,18 @@ class ScanViewModel(
         setState { copy(isProcessing = false) }
     }
 
-
+    /**
+     * Extracts and normalizes an OCR candidate into a valid base id.
+     *
+     * The regex is intentionally loose so it can find candidates in noisy OCR text. The actual
+     * correction step is position-aware because this project only supports these structures:
+     * - `LLDD-DDD`
+     * - `L-DDD`
+     * - `LLLDD-DDD`
+     *
+     * This matters because replacing `O -> 0` or `0 -> O` globally would corrupt valid ids.
+     * We only correct characters according to whether that position should be a letter or digit.
+     */
     private fun extractAndNormalize(raw: String): String? {
         val upper = raw.uppercase().trim()
             .filter { it.isLetterOrDigit() || it == '-' }
@@ -116,16 +147,16 @@ class ScanViewModel(
             }
         }.joinToString("")
 
-        // Pre-dash: split by pattern
+        // Pre-dash: choose correction rules by supported id shape.
         val fixedPrefix = if (prefix.length == 1) {
-            // L-DDD pattern: single letter, no digit zone
+            // L-DDD pattern: single letter, no digit zone before the dash.
             prefix.map { c ->
                 when (c) {
                     '0' -> 'O'; '1' -> 'I'; else -> c
                 }
             }.joinToString("")
         } else {
-            // LLDD or LLLDD: leading chars are letters, last 2 are digits
+            // LLDD or LLLDD: leading chars are letters, last 2 are digits.
             val letterPart = prefix.dropLast(2)
             val digitPart = prefix.takeLast(2)
             val fixedLetters = letterPart.map { c ->
@@ -149,13 +180,17 @@ class ScanViewModel(
         consecutiveCount = 0
     }
 
+    /**
+     * Stops scanning immediately after a resolved result, then resumes after a short cooldown.
+     * This prevents duplicate snackbars/navigation while the same card remains in frame.
+     */
     private fun applyCooldown() {
         cooldownActive = true
-        setState { copy(isScanning = false) } // <- stops camera immediately on match
+        setState { copy(isScanning = false) }
         viewModelScope.launch {
             delay(1500L)
             cooldownActive = false
-            setState { copy(isScanning = true) } // <- restores camera after cooldown
+            setState { copy(isScanning = true) }
         }
     }
 }

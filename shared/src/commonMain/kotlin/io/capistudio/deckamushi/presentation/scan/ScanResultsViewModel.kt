@@ -1,11 +1,16 @@
 package io.capistudio.deckamushi.presentation.scan
 
-import app.cash.sqldelight.TransacterBase
 import io.capistudio.deckamushi.domain.usecase.GetCardsByBaseIdUseCase
 import io.capistudio.deckamushi.domain.util.onFailure
 import io.capistudio.deckamushi.domain.util.onSuccess
 import io.capistudio.deckamushi.presentation.mvi.Mvi
 
+/**
+ * Resolves a scanned base id into the concrete variant the user actually holds.
+ *
+ * Scanner flow only knows `base_id`, so this viewmodel loads all matching variants and emits a
+ * navigation effect when the user selects the correct card art/printing.
+ */
 class ScanResultsViewModel(
     private val baseId: String,
     private  val getCardsByBaseIdUseCase: GetCardsByBaseIdUseCase,
@@ -23,6 +28,7 @@ class ScanResultsViewModel(
     }
 
     private suspend fun loadVariants() {
+        // Loading is eager because this screen exists only to resolve variants for one scanned id.
         setState { copy(isLoading = true) }
         getCardsByBaseIdUseCase(baseId)
             .onSuccess { cards -> setState { copy(isLoading = false, cards = cards) } }

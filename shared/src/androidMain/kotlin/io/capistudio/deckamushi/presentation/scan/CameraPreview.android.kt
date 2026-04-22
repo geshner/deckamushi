@@ -52,6 +52,8 @@ actual fun CameraPreview(
                     it.surfaceProvider = view.surfaceProvider
                 }
 
+                // Preview + analysis must be bound together so the camera preview and OCR pipeline
+                // share the same lifecycle and do not unbind each other.
                 val analysis = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
@@ -67,9 +69,9 @@ actual fun CameraPreview(
                                 recognizer.process(image)
                                     .addOnSuccessListener { result ->
                                         val imageWidth = mediaImage.width.toFloat()
-                                        val imageHeight = mediaImage.height.toFloat()
 
-                                        //Center crop zone: middle 70%Width, middle 30% height
+                                        // Restrict OCR to the center guide area so background text
+                                        // is less likely to compete with the printed card id.
                                         val cropLeft = imageWidth * 0.15f
                                         val cropRight = imageWidth * 0.85f
                                         val cropTop = imageWidth * 0.35f
@@ -92,6 +94,8 @@ actual fun CameraPreview(
                                         }
                                         */
                                     }
+                                    // ImageProxy must always be closed so CameraX can deliver the
+                                    // next frame to the analyzer.
                                     .addOnCompleteListener { imageProxy.close() }
                             } else {
                                 imageProxy.close()

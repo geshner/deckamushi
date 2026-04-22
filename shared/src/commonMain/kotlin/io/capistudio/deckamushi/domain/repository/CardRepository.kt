@@ -8,6 +8,12 @@ import io.capistudio.deckamushi.domain.model.OwnedCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
+/**
+ * Local data boundary for card catalog reads and owned-collection mutations.
+ *
+ * This repository currently exposes both card browsing operations and collection quantity changes
+ * because both are backed by the same local SQLDelight database.
+ */
 interface CardRepository {
     suspend fun getCardById(id: String): Card?
     suspend fun getCardsCount(): Long
@@ -23,6 +29,7 @@ interface CardRepository {
     suspend fun getCardsByBaseId(baseId: String): List<Card>
 }
 
+/** SQLDelight-backed implementation of [CardRepository]. */
 class CardRepositoryImpl(
     private val dbProvider: AppDatabaseProvider,
 ) : CardRepository {
@@ -98,6 +105,7 @@ class CardRepositoryImpl(
     }
 
     override suspend fun decrementOwned(cardId: String) {
+        // Quantity 1 should remove the row entirely; larger quantities are decremented in place.
         db.collectionQueries.deleteIfQuantityIsOne(cardId)
         db.collectionQueries.decrementQuantity(cardId)
     }
@@ -122,6 +130,8 @@ class CardRepositoryImpl(
     }
 
     override fun getOwnedCardsPagingSource(): PagingSource<Int, OwnedCard> {
+        // Paging is backed directly by SQLDelight queries so collection screens can load lazily
+        // without materializing the full owned-card list in memory.
         return QueryPagingSource(
             countQuery = db.collectionQueries.getOwnedTotal(),
             transacter = db.collectionQueries,
@@ -146,6 +156,7 @@ class CardRepositoryImpl(
     }
 
     override suspend fun getCardsByBaseId(baseId: String): List<Card> {
+        // Scanner flow works from base id first, then lets the user choose a specific variant.
         val results = db.cardQueries.getCardsByBaseId(baseId)
             .executeAsList()
             .map { r ->

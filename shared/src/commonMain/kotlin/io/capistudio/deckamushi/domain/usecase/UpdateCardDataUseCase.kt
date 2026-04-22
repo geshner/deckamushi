@@ -6,6 +6,16 @@ import io.capistudio.deckamushi.data.mapper.CardDtoMapper.toDbModel
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.data.remote.RemoteResult
 
+/**
+ * Synchronizes remote card metadata into the local SQLDelight database.
+ *
+ * Current behavior is intentionally non-destructive:
+ * - `version.json` is checked first using a cached ETag
+ * - `cardsVersion` is used as an additional logical safety check
+ * - `cards.json` is fetched only when needed
+ * - rows are written with `INSERT OR REPLACE`
+ * - no pre-sync delete/wipe step is performed
+ */
 class UpdateCardDataUseCase(
     private val api: DeckamushiDataApi,
     private val cache: VersionCache,
@@ -18,6 +28,12 @@ class UpdateCardDataUseCase(
         data class Error(val message: String) : Result
     }
 
+    /**
+     * Executes the current sync policy.
+     *
+     * A result of [Result.Seeded] means rows were inserted/replaced, not that the whole table was
+     * wiped and reseeded from scratch.
+     */
     suspend fun run(): Result {
         val cachedETag = cache.getVersionETag()
         val cachedCardsVersion = cache.getCardsVersion()
@@ -30,7 +46,8 @@ class UpdateCardDataUseCase(
                 val newCardsVersion = versionResult.data.cardsVersion
                 cache.setVersionETag(versionResult.eTag)
 
-                //Extra safety
+                // Extra safety: even if the server returned a fresh version payload, we still avoid
+                // fetching/writing cards when the logical cards version is unchanged.
                 if (newCardsVersion.isNotBlank() && newCardsVersion == cachedCardsVersion) {
                     return Result.UpToDate
                 }
@@ -43,6 +60,8 @@ class UpdateCardDataUseCase(
                         val rows = cardsResult.data.map { it.toDbModel() }
 
                         dbProvider.db.transaction {
+                            // Insert-or-replace keeps existing ids updated while leaving rows absent
+                            // from the new payload untouched. Current sync does not delete cards.
                             for (r in rows) {
                                 dbProvider.db.cardQueries.insertCard(
                                     id = r.id,

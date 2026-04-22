@@ -31,7 +31,10 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-// Declare the expectation for platform-specific dependencies
+/**
+ * Supplies platform-only dependencies that shared code cannot construct for itself, such as the
+ * SQLDelight driver setup or platform-backed local storage.
+ */
 expect fun platformModule(): Module
 
 private val sharedModule = module {
@@ -61,6 +64,7 @@ private val sharedModule = module {
     viewModelOf(::SyncViewModel)
     viewModelOf(::CollectionViewModel)
 
+    // Detail depends on route arguments, so Koin parameters are used instead of a no-arg binding.
     viewModel { (cardId: String, fromScan: Boolean) ->
         CardDetailViewModel(
             cardId = cardId,
@@ -74,6 +78,7 @@ private val sharedModule = module {
 
     viewModelOf(::ScanViewModel)
 
+    // Scan results are keyed by scanned base id so the route provides that parameter.
     viewModel { (baseId: String) ->
         ScanResultsViewModel(
             baseId = baseId,
@@ -82,6 +87,12 @@ private val sharedModule = module {
     }
 }
 
+/**
+ * Starts Koin for the shared app.
+ *
+ * Shared bindings live in `sharedModule`; platform bindings come from `platformModule()`. The
+ * optional config block lets the host app provide platform context before modules are loaded.
+ */
 fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
         config?.invoke(this)
