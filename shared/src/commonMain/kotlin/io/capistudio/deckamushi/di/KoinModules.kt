@@ -61,9 +61,10 @@ private val sharedModule = module {
     viewModelOf(::SyncViewModel)
     viewModelOf(::CollectionViewModel)
 
-    viewModel { (cardId: String) ->
+    viewModel { (cardId: String, fromScan: Boolean) ->
         CardDetailViewModel(
             cardId = cardId,
+            fromScan = fromScan,
             getCardByIdUseCase = get(),
             getOwnedQuantityUseCase = get(),
             incrementOwnedUseCase = get(),

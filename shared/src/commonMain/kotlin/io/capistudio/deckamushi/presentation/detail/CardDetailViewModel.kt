@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 
 class CardDetailViewModel(
     private val cardId: String,
+    private val fromScan: Boolean,
     private val getCardByIdUseCase: GetCardByIdUseCase,
     private val getOwnedQuantityUseCase: GetOwnedQuantityUseCase,
     private val incrementOwnedUseCase: IncrementOwnedUseCase,
@@ -26,16 +27,24 @@ class CardDetailViewModel(
 
     override suspend fun handleAction(action: CardDetailContract.Action) {
         when (action) {
-            CardDetailContract.Action.BackClicked -> emitEffect(Effect.NavigateBack)
+            CardDetailContract.Action.BackClicked -> {
+                val effect = if (state.value.quantityChanged && fromScan)
+                    Effect.NavigateBackSkipScanResults
+                else
+                    Effect.NavigateBack
+                emitEffect(effect)
+            }
             CardDetailContract.Action.OnStart -> loadCardData()
             CardDetailContract.Action.DecrementOwnedClick -> {
                 decrementOwnedCount()
                 loadOwned()
+                setState { copy(quantityChanged = true) }
             }
 
             CardDetailContract.Action.IncrementOwnedClick -> {
                 incrementOwnedCount()
                 loadOwned()
+                setState { copy(quantityChanged = true) }
             }
         }
     }

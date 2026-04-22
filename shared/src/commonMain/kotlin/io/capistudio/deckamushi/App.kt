@@ -8,6 +8,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -55,6 +56,7 @@ fun App() {
     val showSnackbar: (String) -> Unit = { message ->
         scope.launch { snackbarHostState.showSnackbar(message) }
     }
+    val backOverride = remember { mutableStateOf<(() -> Unit)?>(null)  }
 
     MaterialTheme {
         Scaffold(
@@ -63,7 +65,9 @@ fun App() {
                 DeckamushiTopAppBar(
                     title = title,
                     canGoBack = canGoBack,
-                    onBackClick = { navController.popBackStack() },
+                    onBackClick = {
+                        backOverride.value?.invoke() ?: navController.popBackStack()
+                    },
                 )
             }
         ) { padding ->
@@ -111,8 +115,15 @@ fun App() {
                         val detail = backStackEntry.toRoute<Screen.CardDetail>()
                         CardDetailRoute(
                             cardId = detail.id,
+                            fromScan = detail.fromScan,
                             showSnackbar = showSnackbar,
+                            onRegisterBackOverride = { handler -> backOverride.value = handler },
                             onBack = { navController.popBackStack() },
+                            onBackSkipScanResults = {
+                                if (!navController.popBackStack<Screen.ScanResults>(inclusive = true)) {
+                                    navController.popBackStack()
+                                }
+                            }
                         )
                     }
 
@@ -120,7 +131,7 @@ fun App() {
                         ScanRoute(
                             showSnackbar = showSnackbar,
                             onNavigateToDetail = { id ->
-                                navController.navigate(Screen.CardDetail(id))
+                                navController.navigate(Screen.CardDetail(id, fromScan = true))
                             },
                             onNavigateToResults = { baseId ->
                                 navController.navigate(Screen.ScanResults(baseId))
@@ -133,7 +144,7 @@ fun App() {
                         ScanResultsRoute(
                             baseId = route.baseId,
                             onNavigateToDetail = { id ->
-                                navController.navigate(Screen.CardDetail(id))
+                                navController.navigate(Screen.CardDetail(id, fromScan = true))
                             }
                         )
                     }

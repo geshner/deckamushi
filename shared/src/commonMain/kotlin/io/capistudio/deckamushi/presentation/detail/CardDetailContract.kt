@@ -9,6 +9,7 @@ object CardDetailContract {
         val card: Card? = null,
         val error: String? = null,
         val ownedQuantity: Long = 0L,
+        val quantityChanged: Boolean = false,
     )
 
     sealed interface Action {
@@ -20,6 +21,7 @@ object CardDetailContract {
 
     sealed interface Effect {
         data object NavigateBack : Effect
+        data object NavigateBackSkipScanResults : Effect
         data class ShowMessage(val message: String) : Effect
     }
 }

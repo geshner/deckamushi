@@ -35,9 +35,6 @@ fun CardDetailScreen(
     Column(
         modifier = Modifier.safeContentPadding()
     ) {
-        Button(onClick = { onAction(Action.BackClicked) }) { Text("Back") }
-        Spacer(Modifier.height(12.dp))
-
         when {
             state.isLoading -> Text("Loading...")
             state.error != null -> Text("Error: ${state.error}")
