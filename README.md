@@ -1,9 +1,22 @@
 # Deckamushi 🃏
 
-A **Kotlin Multiplatform** card collection tracker for the One Piece Card Game.  
-Scan physical cards with your camera, browse the full card database, and manage your collection — on Android and iOS from a single shared codebase.
+Deckamushi is a **Kotlin Multiplatform** One Piece Card Game collection tracker.
 
----
+The app currently focuses on an **Android-first MVP** built from a shared codebase. It can sync a remote card database, browse cards, track owned quantities, and scan physical cards on Android using OCR.
+
+## Current MVP Features
+
+- 🔄 **Remote data sync** from a GitHub-hosted `cards.json`
+- 📚 **All cards browser**
+- 🗂️ **Collection screen** for owned cards
+- 🃏 **Card detail** with owned quantity controls
+- 📷 **Android card scanner** for reading printed card IDs from physical cards
+- 🎴 **Variant picker** when a base card ID has multiple print variants
+
+## Platform Status
+
+- **Android:** main supported platform today
+- **iOS:** shared app structure exists, but scanner behavior is currently a placeholder and not feature-complete
 
 ## Tech Stack
 
@@ -11,59 +24,112 @@ Scan physical cards with your camera, browse the full card database, and manage 
 |---|---|
 | Language | Kotlin Multiplatform (KMP) |
 | UI | Compose Multiplatform |
+| Navigation | Navigation Compose KMP |
 | Architecture | MVI |
-| Database | SQLDelight (SQLite) |
-| DI | Koin |
-| Image loading | Coil 3 + Ktor |
-| Card scanning | CameraX (Android) / AVFoundation (iOS) |
-| OCR | Tesseract 4 — `tesseract4android` / `SwiftyTesseract` |
-| Fuzzy matching | Pure Kotlin Levenshtein distance |
-
----
-
-## Features
-
-- 📖 **Card Browser** — search and filter by name, color, rarity, and type
-- 🔍 **Card Detail** — full card info, owned count, variant list
-- 🗂️ **My Collection** — track owned cards with quantity controls
-- 📷 **Card Scanner** — point camera at a card; OCR reads the ID and shows all variants instantly
-
----
+| Dependency Injection | Koin |
+| Database | SQLDelight |
+| Networking | Ktor |
+| Serialization | kotlinx.serialization |
+| Image loading | Coil 3 |
+| Logging | Kermit |
+| Paging | Paging 3 KMP |
+| Android scanner | CameraX + ML Kit Text Recognition |
 
 ## Project Structure
 
-```
-composeApp/
-  src/
-    commonMain/     ← shared business logic, UI, ViewModels, repositories
-    androidMain/    ← Android-specific implementations (CameraX, Tesseract)
-    iosMain/        ← iOS-specific implementations (AVFoundation, SwiftyTesseract)
-iosApp/             ← SwiftUI entry point for iOS
-docs/
-  AppPlan.md        ← full product & technical plan
-  AppSteps.md       ← phase-by-phase build checklist
+```text
+Deckamushi/
+  androidApp/   Android launcher app
+  shared/       Shared KMP code: UI, navigation, viewmodels, domain, data, SQLDelight
+  iosApp/       Xcode project / iOS host app
+  docs/         Planning notes, architecture decisions, and implementation history
 ```
 
----
+### Important modules
+
+- `shared/`
+  - Shared UI and navigation
+  - Domain use cases and repositories
+  - SQLDelight database access
+  - Platform-specific implementations via `androidMain` / `iosMain`
+- `androidApp/`
+  - Android entry point and app packaging
+- `iosApp/`
+  - iOS host application for the shared UI
+
+## App Navigation
+
+The current shared app includes these main routes:
+
+- `Home`
+- `CardList`
+- `Collection`
+- `Sync`
+- `Scanner`
+- `ScanResults`
+- `CardDetail`
+
+## Local Configuration
+
+The app expects GitHub data source values in `local.properties`.
+
+Required keys:
+
+```properties
+GITHUB_PAT=your_github_token
+GITHUB_DATA_OWNER=your_github_username_or_org
+GITHUB_DATA_REPO=your_repo_name
+```
+
+These values are used by `BuildKonfig` in `shared/build.gradle.kts` to build the GitHub API base URL and authenticate requests for card data.
 
 ## Build & Run
 
 ### Android
 
-```shell
-# Windows
-.\gradlew.bat :composeApp:assembleDebug
+Build the Android app:
 
-# macOS / Linux
-./gradlew :composeApp:assembleDebug
+```powershell
+.\gradlew.bat :androidApp:assembleDebug
+```
+
+If you just want to verify the shared Android source set compiles:
+
+```powershell
+.\gradlew.bat :shared:compileAndroidMain
 ```
 
 ### iOS
 
-Open `iosApp/iosApp.xcodeproj` in Xcode (requires macOS + Xcode) and run on simulator or device.
+Open `iosApp/iosApp.xcodeproj` in Xcode on macOS and run the app from there.
 
----
+## Notes About Sync
 
-## Status
+- Card data is seeded from remote JSON into the local SQLDelight database
+- Existing cards are updated with insert/replace behavior during sync
+- New cards are added on sync
+- The current sync flow does **not** wipe the full cards table before inserting
 
-> 🚧 In active development — see [`docs/AppSteps.md`](docs/AppSteps.md) for the current build checklist.
+## Documentation Status
+
+The documentation is being refreshed to match the current implementation.
+
+For now, the `docs/` folder contains a mix of:
+
+- planning documents
+- implementation notes
+- architectural decisions
+- lesson checkpoints
+
+This `README.md` is intended to be the current high-level entry point for the project.
+
+## Current Status
+
+Deckamushi currently has a working MVP around these core loops:
+
+1. Sync card data
+2. Browse cards
+3. Track owned quantities
+4. Scan cards on Android and resolve variants
+
+The main development focus is currently Android-first, while keeping the shared architecture ready for iOS expansion.
