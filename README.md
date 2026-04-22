@@ -114,14 +114,22 @@ Open `iosApp/iosApp.xcodeproj` in Xcode on macOS and run the app from there.
 
 The documentation is being refreshed to match the current implementation.
 
-For now, the `docs/` folder contains a mix of:
+Use these documents as the current entry points:
 
-- planning documents
-- implementation notes
-- architectural decisions
-- lesson checkpoints
+- [`docs/README.md`](docs/README.md) — documentation index and reading order
+- [`docs/CurrentState.md`](docs/CurrentState.md) — what is implemented today
+- [`docs/Architecture.md`](docs/Architecture.md) — current architecture and module boundaries
+- [`docs/Setup.md`](docs/Setup.md) — setup, build, and run instructions
+- [`docs/DataSync.md`](docs/DataSync.md) — current sync pipeline
+- [`docs/ScannerFlow.md`](docs/ScannerFlow.md) — current scanner behavior
 
-This `README.md` is intended to be the current high-level entry point for the project.
+The `docs/` folder still contains some historical planning and lesson files, so if a historical doc conflicts with current behavior, prefer:
+
+1. the code
+2. the current docs above
+3. older planning/history notes
+
+This root `README.md` is the high-level project entry point.
 
 ## Current Status
 
