@@ -53,10 +53,6 @@ fun CardDetailRoute(
         }
     }
 
-    LaunchedEffect(cardId) {
-        vm.dispatch(CardDetailContract.Action.OnStart)
-    }
-
     CardDetailScreen(
         state = state,
         onAction = vm::dispatch

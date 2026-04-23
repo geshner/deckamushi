@@ -24,10 +24,6 @@ fun CollectionRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        vm.dispatch(CollectionContract.Action.OnStart)
-    }
-
     CollectionScreen(
         state = state,
         pagingItems = vm.ownedCardsPagingData.collectAsLazyPagingItems(),

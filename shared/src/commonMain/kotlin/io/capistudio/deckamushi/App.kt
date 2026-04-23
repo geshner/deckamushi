@@ -98,7 +98,6 @@ fun App() {
                     }
 
                     composable<Screen.CardList> {
-                        koinViewModel<CardListViewModel>()
                         CardListRoute(
                             showSnackbar = showSnackbar,
                             onNavigateToDetail = { id ->
