@@ -104,6 +104,12 @@ kotlin {
     }
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "deckamushi.shared.generated.resources"
+    generateResClass = always
+}
+
 sqldelight {
     databases {
         create("AppDatabase") {
