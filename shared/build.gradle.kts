@@ -143,5 +143,5 @@ buildkonfig {
 }
 
 dependencies {
-    // Keep shared module dependencies common; Android tooling belongs in :androidApp.
+    androidRuntimeClasspath(libs.compose.uiTooling)
 }

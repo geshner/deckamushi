@@ -1,19 +1,14 @@
- package io.capistudio.deckamushi.presentation.cards
+package io.capistudio.deckamushi.presentation.cards
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,17 +21,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.presentation.cards.CardsListContract.Action
-import io.capistudio.deckamushi.presentation.components.RemoteImage
-import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_ASPECT_RATIO
-import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_GRID_COLUMNS
+import io.capistudio.deckamushi.presentation.components.CardGrid
+import io.capistudio.deckamushi.presentation.components.CardGridItem
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -83,10 +75,8 @@ fun CardListScreen(
 
         Spacer(Modifier.height(paddingLarge))
 
-        LazyVerticalGrid(
+        CardGrid(
             state = gridState,
-            columns = GridCells.Fixed(CARD_GRID_COLUMNS),
-            contentPadding = PaddingValues(paddingSmall),
             modifier = Modifier.weight(1f)
         ) {
             items(
@@ -94,18 +84,11 @@ fun CardListScreen(
                 key = pagingItems.itemKey { it.id }
             ) { index ->
                 val card = pagingItems[index]
-                if (card != null) {
-                    RemoteImage(
-                        url = card.imageUrl,
-                        contentDescription = card.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(CARD_ASPECT_RATIO)
-                            .clip(MaterialTheme.shapes.medium)
-                            .padding(paddingSmall)
-                            .clickable(true) {
-                                onAction(Action.CardClicked(card.id))
-                            }
+                card?.let {
+                    CardGridItem(
+                        imageUrl = it.imageUrl,
+                        contentDescription = it.name,
+                        onClick = { onAction(Action.CardClicked(it.id)) }
                     )
                 }
             }

@@ -30,6 +30,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.OwnedCard
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Action
+import io.capistudio.deckamushi.presentation.components.OwnedBadge
 import io.capistudio.deckamushi.presentation.components.RemoteImage
 import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_ASPECT_RATIO
 import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_GRID_COLUMNS
@@ -104,6 +105,11 @@ fun CollectionScreen(
                                     onAction(Action.CardClicked(card.id))
                                 }
                         )
+                        OwnedBadge(
+                            ownedQuantity = card.ownedQuantity.toInt(),
+                            modifier = Modifier.align(Alignment.BottomEnd)
+                        )
+
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
                             shape = CircleShape,
