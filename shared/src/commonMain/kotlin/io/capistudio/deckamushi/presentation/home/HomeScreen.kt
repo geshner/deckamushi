@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingMedium
 
 @Composable
 fun HomeScreen(
@@ -20,7 +21,7 @@ fun HomeScreen(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
+        verticalArrangement = Arrangement.spacedBy(paddingMedium, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Button(onClick = onOpenCards) { Text("All Cards") }

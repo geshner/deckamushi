@@ -1,4 +1,4 @@
-package io.capistudio.deckamushi.presentation.cards
+ package io.capistudio.deckamushi.presentation.cards
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +35,10 @@ import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.presentation.cards.CardsListContract.Action
 import io.capistudio.deckamushi.presentation.components.RemoteImage
+import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_ASPECT_RATIO
+import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_GRID_COLUMNS
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
@@ -61,7 +65,7 @@ fun CardListScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)
+        modifier = Modifier.fillMaxSize().padding(horizontal = paddingSmall)
     ) {
         OutlinedTextField(
             value = state.queryDraft,
@@ -77,12 +81,12 @@ fun CardListScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(paddingLarge))
 
         LazyVerticalGrid(
             state = gridState,
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(8.dp),
+            columns = GridCells.Fixed(CARD_GRID_COLUMNS),
+            contentPadding = PaddingValues(paddingSmall),
             modifier = Modifier.weight(1f)
         ) {
             items(
@@ -96,9 +100,9 @@ fun CardListScreen(
                         contentDescription = card.name,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(0.716f)
+                            .aspectRatio(CARD_ASPECT_RATIO)
                             .clip(MaterialTheme.shapes.medium)
-                            .padding(8.dp)
+                            .padding(paddingSmall)
                             .clickable(true) {
                                 onAction(Action.CardClicked(card.id))
                             }
@@ -119,7 +123,7 @@ fun CardListScreen(
             if (pagingItems.loadState.append is LoadState.Loading) {
                 item {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(paddingLarge),
                         horizontalArrangement = Arrangement.Center
                     ) {
                         CircularProgressIndicator()

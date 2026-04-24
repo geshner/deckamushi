@@ -31,6 +31,10 @@ import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.OwnedCard
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Action
 import io.capistudio.deckamushi.presentation.components.RemoteImage
+import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_ASPECT_RATIO
+import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_GRID_COLUMNS
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 
@@ -76,8 +80,8 @@ fun CollectionScreen(
 
         LazyVerticalGrid(
             state = gridState,
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(8.dp),
+            columns = GridCells.Fixed(CARD_GRID_COLUMNS),
+            contentPadding = PaddingValues(paddingSmall),
             modifier = Modifier.weight(1f)
         ) {
             items(
@@ -93,9 +97,9 @@ fun CollectionScreen(
                             contentDescription = card.name,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(0.716f)
+                                .aspectRatio(CARD_ASPECT_RATIO)
                                 .clip(MaterialTheme.shapes.medium)
-                                .padding(8.dp)
+                                .padding(paddingSmall)
                                 .clickable(true) {
                                     onAction(Action.CardClicked(card.id))
                                 }
@@ -104,7 +108,7 @@ fun CollectionScreen(
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
                             shape = CircleShape,
                             modifier = Modifier.align(Alignment.BottomEnd)
-                                .padding(8.dp)
+                                .padding(paddingSmall)
                         ) {
 
                             Text(
@@ -130,7 +134,7 @@ fun CollectionScreen(
             if (pagingItems.loadState.append is LoadState.Loading) {
                 item {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(paddingLarge),
                         horizontalArrangement = Arrangement.Center
                     ) {
                         CircularProgressIndicator()

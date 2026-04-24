@@ -21,6 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.presentation.components.RemoteImage
 import io.capistudio.deckamushi.presentation.detail.CardDetailContract.Action
+import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_ASPECT_RATIO
+import io.capistudio.deckamushi.presentation.theme.Dimensions.cardImageHeight
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingXLarge
 
 @Composable
 fun CardDetailScreen(
@@ -49,8 +52,8 @@ fun CardDetailScreen(
                         url = c.imageUrl,
                         contentDescription = c.name,
                         modifier = Modifier
-                            .height(320.dp)
-                            .aspectRatio(0.716f)
+                            .height(cardImageHeight)
+                            .aspectRatio(CARD_ASPECT_RATIO)
                             .clip(MaterialTheme.shapes.medium)
                     )
                 }
@@ -60,7 +63,7 @@ fun CardDetailScreen(
                 Text("Variant: ${c.variant ?: "<none>"}")
                 Text("Image URL: ${c.imageUrl ?: "<none>"}")
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(paddingXLarge))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),

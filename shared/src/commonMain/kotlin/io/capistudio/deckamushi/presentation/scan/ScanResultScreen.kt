@@ -18,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.presentation.components.RemoteImage
+import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_ASPECT_RATIO
+import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_GRID_COLUMNS
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
 
 @Composable
 fun ScanResultScreen(
@@ -36,8 +39,8 @@ fun ScanResultScreen(
             color = MaterialTheme.colorScheme.error
         )
         else -> LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(8.dp),
+            columns = GridCells.Fixed(CARD_GRID_COLUMNS),
+            contentPadding = PaddingValues(paddingSmall),
             modifier = Modifier.fillMaxSize()
         ) {
             items(
@@ -49,9 +52,9 @@ fun ScanResultScreen(
                     contentDescription = card.name,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(0.716f)
+                        .aspectRatio(CARD_ASPECT_RATIO)
                         .clip(MaterialTheme.shapes.medium)
-                        .padding(8.dp)
+                        .padding(paddingSmall)
                         .clickable(true) {
                             onAction(ScanResultsContract.Action.CardClicked(card.id))
                         }

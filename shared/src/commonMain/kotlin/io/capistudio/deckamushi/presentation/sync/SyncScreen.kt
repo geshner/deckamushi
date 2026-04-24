@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.presentation.sync.SyncContract.Action
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
+import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingMedium
 
 @Composable
 fun SyncScreen(
@@ -36,13 +38,13 @@ fun SyncScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text("cards.json → seed DB")
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(paddingMedium))
 
         Text("Status: $status")
         Text("Last seeded version: ${state.lastSeededVersion ?: "<none>"}")
         Text("Rows written: ${state.lastSeededCount?.toString() ?: "<none>"}")
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(paddingMedium))
 
         Button(
             enabled = !state.isWorking,
@@ -51,7 +53,7 @@ fun SyncScreen(
             Text("Sync / Seed cards")
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(paddingLarge))
 
         Button(onClick = { onAction(Action.GoToListClicked) }) {
             Text("Go To List")
