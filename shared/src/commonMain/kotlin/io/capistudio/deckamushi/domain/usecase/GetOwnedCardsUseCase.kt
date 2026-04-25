@@ -3,6 +3,7 @@ package io.capistudio.deckamushi.domain.usecase
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.domain.model.OwnedCard
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,7 @@ class GetOwnedCardsUseCase(
     private val repository: CardRepository,
 ) {
 
-    operator fun invoke(): Flow<PagingData<OwnedCard>> {
+    operator fun invoke(): Flow<PagingData<CardSummary>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,

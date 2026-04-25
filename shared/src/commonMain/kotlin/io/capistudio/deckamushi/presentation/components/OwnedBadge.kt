@@ -27,7 +27,7 @@ fun OwnedBadge(
         border = BorderStroke(
             1.5.dp,
             MaterialTheme.colorScheme.background.copy(alpha = 0.8f)),
-
+        contentColor = MaterialTheme.colorScheme.onTertiary,
         shadowElevation = 6.dp
     ) {
 

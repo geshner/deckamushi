@@ -22,13 +22,18 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.capistudio.deckamushi.domain.model.Card
+import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.presentation.cards.CardsListContract.Action
+import io.capistudio.deckamushi.presentation.collection.CollectionContract
 import io.capistudio.deckamushi.presentation.components.CardGrid
 import io.capistudio.deckamushi.presentation.components.CardGridItem
+import io.capistudio.deckamushi.presentation.components.OwnedBadge
+import io.capistudio.deckamushi.presentation.components.ReprintBanner
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,7 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun CardListScreen(
     state: CardsListContract.State,
     onAction: (Action) -> Unit,
-    pagingItems: LazyPagingItems<Card>,
+    pagingItems: LazyPagingItems<CardSummary>,
 ) {
     val gridState = rememberLazyGridState(
         initialFirstVisibleItemIndex = state.scrollIndex,
@@ -85,7 +90,18 @@ fun CardListScreen(
                         imageUrl = it.imageUrl,
                         contentDescription = it.name,
                         onClick = { onAction(Action.CardClicked(it.id)) }
-                    )
+                    ) {
+                        if (card.isReprint) {
+                            ReprintBanner(
+                                originalCardBaseId = card.id,
+                                compact = true,
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = 24.dp)
+                            )
+                        }
+
+                    }
                 }
             }
 

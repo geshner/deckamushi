@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import app.cash.sqldelight.paging3.QueryPagingSource
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.domain.model.Card
-import io.capistudio.deckamushi.domain.model.OwnedCard
+import io.capistudio.deckamushi.domain.model.CardSummary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -17,21 +17,21 @@ import kotlinx.coroutines.IO
 interface CardRepository {
     suspend fun getCardById(id: String): Card?
     suspend fun getCardsCount(): Long
-    suspend fun getCardsPage(limit: Int, offset: Int): List<Card>
+    suspend fun getCardsPage(limit: Int, offset: Int): List<CardSummary>
     suspend fun searchCardsCount(query: String): Long
-    suspend fun searchCardsByName(query: String, limit: Int, offset: Int): List<Card>
+    suspend fun searchCardsByName(query: String, limit: Int, offset: Int): List<CardSummary>
     suspend fun getOwnedQuantity(cardId: String): Long
     suspend fun incrementOwned(cardId: String)
     suspend fun decrementOwned(cardId: String)
-    suspend fun getOwnedCards(limit: Int, offset: Int): List<OwnedCard>
+    suspend fun getOwnedCards(limit: Int, offset: Int): List<CardSummary>
     suspend fun getOwnedTotal(): Long
-    fun getOwnedCardsPagingSource(): PagingSource<Int, OwnedCard>
-    suspend fun getCardsByBaseId(baseId: String): List<Card>
+    fun getOwnedCardsPagingSource(): PagingSource<Int, CardSummary>
+    suspend fun getCardsByBaseId(baseId: String): List<CardSummary>
 }
 
 /** SQLDelight-backed implementation of [CardRepository]. */
 class CardRepositoryImpl(
-    private val dbProvider: AppDatabaseProvider,
+    dbProvider: AppDatabaseProvider,
 ) : CardRepository {
     val db = dbProvider.db
 
@@ -55,17 +55,16 @@ class CardRepositoryImpl(
     override suspend fun getCardsPage(
         limit: Int,
         offset: Int
-    ): List<Card> {
+    ): List<CardSummary> {
         return db.cardQueries
             .getCardsPage(limit = limit.toLong(), offset = offset.toLong())
             .executeAsList()
             .map { r ->
-                Card(
+                CardSummary(
                     id = r.id,
-                    baseId = r.base_id,
-                    variant = r.variant,
                     name = r.name,
-                    imageUrl = r.image_url,
+                    variant = r.variant,
+                    imageUrl = r.image_url.orEmpty(),
                 )
             }
     }
@@ -78,17 +77,16 @@ class CardRepositoryImpl(
         query: String,
         limit: Int,
         offset: Int
-    ): List<Card> {
+    ): List<CardSummary> {
         return db.cardQueries
             .searchCardsByName(query, limit.toLong(), offset.toLong())
             .executeAsList()
             .map { r ->
-                Card(
+                CardSummary(
                     id = r.id,
-                    baseId = r.base_id,
                     variant = r.variant,
                     name = r.name,
-                    imageUrl = r.image_url,
+                    imageUrl = r.image_url.orEmpty(),
                 )
             }
     }
@@ -110,17 +108,16 @@ class CardRepositoryImpl(
         db.collectionQueries.decrementQuantity(cardId)
     }
 
-    override suspend fun getOwnedCards(limit: Int, offset: Int): List<OwnedCard> {
+    override suspend fun getOwnedCards(limit: Int, offset: Int): List<CardSummary> {
         return db.cardQueries.getOwnedCards(limit.toLong(), offset.toLong())
             .executeAsList()
             .map { r ->
-                OwnedCard(
+                CardSummary(
                     id = r.id,
-                    baseId = r.base_id,
                     variant = r.variant,
                     name = r.name,
-                    imageUrl = r.image_url,
-                    ownedQuantity = r.owned_quantity
+                    imageUrl = r.image_url.orEmpty(),
+                    ownedCount = r.owned_count
                 )
             }
     }
@@ -129,7 +126,7 @@ class CardRepositoryImpl(
         return db.collectionQueries.getOwnedTotal().executeAsOneOrNull() ?: 0L
     }
 
-    override fun getOwnedCardsPagingSource(): PagingSource<Int, OwnedCard> {
+    override fun getOwnedCardsPagingSource(): PagingSource<Int, CardSummary> {
         // Paging is backed directly by SQLDelight queries so collection screens can load lazily
         // without materializing the full owned-card list in memory.
         return QueryPagingSource(
@@ -140,14 +137,13 @@ class CardRepositoryImpl(
                 db.cardQueries.getOwnedCards(
                     limit = limit,
                     offset = offset,
-                    mapper = { id: String, baseId: String, variant: String?, name: String, color_flags: Long, rarity_id: Long, card_category: String, attack_power: Long?, counter_power: Long?, life: Long?, combat_attribute: String?, feature: String?, card_text: String?, block_icon_code: String?, pack_name: String?, imageUrl: String?, ownedQuantity: Long ->
-                        OwnedCard(
+                    mapper = { id: String, name: String, imageUrl: String?, variant: String?, ownedCount: Long ->
+                        CardSummary(
                             id = id,
-                            baseId = baseId,
                             variant = variant,
                             name = name,
-                            imageUrl = imageUrl,
-                            ownedQuantity = ownedQuantity
+                            imageUrl = imageUrl.orEmpty(),
+                            ownedCount = ownedCount
                         )
                     }
                 )
@@ -155,17 +151,17 @@ class CardRepositoryImpl(
         )
     }
 
-    override suspend fun getCardsByBaseId(baseId: String): List<Card> {
+    override suspend fun getCardsByBaseId(baseId: String): List<CardSummary> {
         // Scanner flow works from base id first, then lets the user choose a specific variant.
         val results = db.cardQueries.getCardsByBaseId(baseId)
             .executeAsList()
             .map { r ->
-                Card(
+                CardSummary(
                     id = r.id,
-                    baseId = r.base_id,
-                    variant = r.variant,
                     name = r.name,
-                    imageUrl = r.image_url,
+                    variant = r.variant,
+                    imageUrl = r.image_url.orEmpty(),
+                    ownedCount = r.owned_count
                 )
             }
 

@@ -12,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -78,7 +78,7 @@ actual fun CameraPreview(
                                         val cropBottom = imageWidth * 0.65f
 
                                         val croppedText = result.textBlocks
-                                            .filter{ block ->
+                                            .filter { block ->
                                                 val box = block.boundingBox ?: return@filter false
                                                 box.left >= cropLeft && box.right <= cropRight &&
                                                         box.top >= cropTop && box.bottom <= cropBottom
@@ -90,9 +90,9 @@ actual fun CameraPreview(
 
                                         /** Last working card scan onsuccessListener content
                                         if (result.text.isNotBlank()) {
-                                            onTextDetected(result.text)
+                                        onTextDetected(result.text)
                                         }
-                                        */
+                                         */
                                     }
                                     // ImageProxy must always be closed so CameraX can deliver the
                                     // next frame to the analyzer.

@@ -18,6 +18,6 @@
 
     <!-- Status / Messages -->
     <string name="error_loading_cards">Error loading cards.</string>
-
+    <string name="label_reprint_of">Reprint of %1$s</string>
 
 </resources>

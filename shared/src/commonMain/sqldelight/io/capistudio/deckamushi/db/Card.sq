@@ -45,8 +45,8 @@ WHERE id = ?;
 
 getAllCardsWithOwnership:
 SELECT
-  c.*,
-  COALESCE(col.quantity, 0) AS owned_quantity,
+  c.id, c.name, c.image_url, c.variant,
+  COALESCE(col.quantity, 0) AS owned_count,
   CASE
     WHEN COALESCE(col.quantity, 0) > 0 THEN 1
     ELSE 0
@@ -57,7 +57,7 @@ LEFT JOIN collection col
 ORDER BY c.base_id, c.variant;
 
 getCardsPage:
-SELECT *
+SELECT id, name, image_url, variant
 FROM cards
 ORDER BY base_id, variant
 LIMIT :limit OFFSET :offset;
@@ -66,7 +66,7 @@ getCardsCount:
 SELECT COUNT(*) FROM cards;
 
 searchCardsByName:
-SELECT *
+SELECT id, name, image_url, variant
 FROM cards
 WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%'
 ORDER BY base_id, variant
@@ -79,8 +79,8 @@ WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%';
 
 getOwnedCards:
 SELECT
-    c.*,
-    col.quantity AS owned_quantity
+    c.id, c.name, c.image_url, c.variant,
+    col.quantity AS owned_count
 FROM cards c
 JOIN collection col
     ON col.card_id = c.id
@@ -88,7 +88,14 @@ ORDER BY c.base_id, c.variant
 LIMIT :limit OFFSET :offset;
 
 getCardsByBaseId:
-SELECT *
-FROM cards
-WHERE base_id = :baseId
+SELECT id, name, image_url, variant,
+  COALESCE(col.quantity, 0) AS owned_count,
+  CASE
+    WHEN COALESCE(col.quantity, 0) > 0 THEN 1
+    ELSE 0
+  END AS is_owned
+FROM cards c
+LEFT JOIN collection col
+  ON col.card_id = c.id
+WHERE c.base_id = :baseId
 ORDER BY variant;

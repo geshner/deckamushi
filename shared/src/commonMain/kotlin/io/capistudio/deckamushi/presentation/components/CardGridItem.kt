@@ -2,8 +2,9 @@ package io.capistudio.deckamushi.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,13 +19,13 @@ fun CardGridItem(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    overlay: @Composable () -> Unit = {},
+    overlay: @Composable BoxScope.() -> Unit = {},
 ) {
     Box(modifier) {
         RemoteImage(
             url = imageUrl,
             contentDescription = contentDescription,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxWidth()
                 .aspectRatio(CARD_ASPECT_RATIO)
                 .clip(MaterialTheme.shapes.medium)
                 .padding(paddingSmall)

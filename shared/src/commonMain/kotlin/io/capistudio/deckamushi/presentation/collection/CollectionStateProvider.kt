@@ -1,12 +1,13 @@
 package io.capistudio.deckamushi.presentation.collection
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.domain.model.OwnedCard
 
 // 1. Data class for Preview
 data class CollectionPreviewState(
     val state: CollectionContract.State,
-    val cards: List<OwnedCard>
+    val cards: List<CardSummary>
 )
 
 // 2. Provider implementation
@@ -15,29 +16,26 @@ class CollectionStateProvider : PreviewParameterProvider<CollectionPreviewState>
         CollectionPreviewState(
             state = CollectionContract.State(totalCount = 2),
             cards = listOf(
-                OwnedCard(
+                CardSummary(
                     id = "1",
-                    baseId = "b1",
-                    variant = null,
                     name = "Luffy",
-                    imageUrl = null,
-                    ownedQuantity = 2
+                    imageUrl = "",
+                    ownedCount = 2,
+                    variant = null
                 ),
-                OwnedCard(
+                CardSummary(
                     id = "2",
-                    baseId = "b2",
-                    variant = "Holo",
                     name = "Zoro",
-                    imageUrl = null,
-                    ownedQuantity = 1
+                    imageUrl = "",
+                    ownedCount = 1,
+                    variant = "p1"
                 ),
-                OwnedCard(
+                CardSummary(
                     id = "3",
-                    baseId = "b2",
-                    variant = "Holo",
                     name = "Sanji",
-                    imageUrl = null,
-                    ownedQuantity = 1
+                    imageUrl = "",
+                    ownedCount = 1,
+                    variant = "r1"
                 )
             )
         ),

@@ -18,16 +18,18 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import io.capistudio.deckamushi.domain.model.OwnedCard
+import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.presentation.collection.CollectionContract.Action
 import io.capistudio.deckamushi.presentation.components.CardGrid
 import io.capistudio.deckamushi.presentation.components.CardGridItem
 import io.capistudio.deckamushi.presentation.components.OwnedBadge
+import io.capistudio.deckamushi.presentation.components.ReprintBanner
 import io.capistudio.deckamushi.presentation.theme.DeckamushiPreview
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
 import io.capistudio.deckamushi.presentation.theme.ThemePreviewsWithSystemUI
@@ -38,7 +40,7 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun CollectionScreen(
     state: CollectionContract.State,
-    pagingItems: LazyPagingItems<OwnedCard>,
+    pagingItems: LazyPagingItems<CardSummary>,
     onAction: (Action) -> Unit,
 ) {
 
@@ -81,17 +83,26 @@ fun CollectionScreen(
             ) { index ->
                 val card = pagingItems[index]
                 card?.let {
-                    Box() {
-                        CardGridItem(
-                            imageUrl = it.imageUrl,
-                            contentDescription = it.name,
-                            onClick = { onAction(CollectionContract.Action.CardClicked(it.id)) }
-                        )
-
+                    CardGridItem(
+                        imageUrl = it.imageUrl,
+                        contentDescription = it.name,
+                        onClick = { onAction(CollectionContract.Action.CardClicked(it.id)) }
+                    ) {
                         OwnedBadge(
-                            ownedCount = card.ownedQuantity.toInt(),
+                            ownedCount = card.ownedCount.toInt(),
                             modifier = Modifier.align(Alignment.BottomEnd)
                         )
+
+                        if (card.isReprint) {
+                            ReprintBanner(
+                                originalCardBaseId = card.id,
+                                compact = true,
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = 24.dp)
+                            )
+                        }
+
                     }
                 }
             }

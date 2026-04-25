@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import co.touchlab.kermit.Logger
 import io.capistudio.deckamushi.domain.model.Card
+import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
@@ -33,7 +34,7 @@ class CardListViewModel(
     private val _query = MutableStateFlow("")
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val cardsPagingData: Flow<PagingData<Card>> = _query
+    val cardsPagingData: Flow<PagingData<CardSummary>> = _query
         .debounce(300)
         .flatMapLatest { query -> getCardsPageUseCase(query) }
         .cachedIn(viewModelScope)
