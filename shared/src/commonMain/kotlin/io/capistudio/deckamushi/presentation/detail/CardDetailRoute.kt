@@ -2,9 +2,9 @@ package io.capistudio.deckamushi.presentation.detail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import io.capistudio.deckamushi.presentation.components.CollectEffects
 import io.capistudio.deckamushi.presentation.components.PlatformBackHandler
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -32,8 +32,8 @@ fun CardDetailRoute(
 
     // Register our ViewModel-aware back handler into the top bar, clean up on leave.
     DisposableEffect(Unit) {
-      onRegisterBackOverride { vm.dispatch(CardDetailContract.Action.BackClicked) }
-      onDispose { onRegisterBackOverride(null) }
+        onRegisterBackOverride { vm.dispatch(CardDetailContract.Action.BackClicked) }
+        onDispose { onRegisterBackOverride(null) }
     }
 
     // Mirrors the same scan-aware back behavior for gesture/system back.
@@ -41,14 +41,12 @@ fun CardDetailRoute(
         vm.dispatch(CardDetailContract.Action.BackClicked)
     }
 
-    LaunchedEffect(Unit) {
-        vm.effects.collect { effect ->
-            when (effect) {
-                CardDetailContract.Effect.NavigateBack -> onBack()
-                CardDetailContract.Effect.NavigateBackSkipScanResults -> onBackSkipScanResults()
-                is CardDetailContract.Effect.ShowMessage -> {
-                    showSnackbar(effect.message)
-                }
+    CollectEffects(vm.effects) { effect ->
+        when (effect) {
+            CardDetailContract.Effect.NavigateBack -> onBack()
+            CardDetailContract.Effect.NavigateBackSkipScanResults -> onBackSkipScanResults()
+            is CardDetailContract.Effect.ShowMessage -> {
+                showSnackbar(effect.message)
             }
         }
     }

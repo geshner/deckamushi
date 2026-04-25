@@ -1,12 +1,12 @@
 package io.capistudio.deckamushi.presentation.scan
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import io.capistudio.deckamushi.presentation.components.CollectEffects
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -26,24 +26,22 @@ actual fun ScanRoute(
     }
 
 
-    LaunchedEffect(Unit) {
-        vm.effects.collect { effect ->
-            when (effect) {
-                is ScanContract.Effect.NavigateToDetail ->
-                    onNavigateToDetail(effect.cardId)
+    CollectEffects(vm.effects) { effect ->
+        when (effect) {
+            is ScanContract.Effect.NavigateToDetail ->
+                onNavigateToDetail(effect.cardId)
 
-                is ScanContract.Effect.NavigateToResults ->
-                    onNavigateToResults(effect.baseId)
+            is ScanContract.Effect.NavigateToResults ->
+                onNavigateToResults(effect.baseId)
 
-                is ScanContract.Effect.ShowMessage ->
-                    showSnackbar(effect.text)
+            is ScanContract.Effect.ShowMessage ->
+                showSnackbar(effect.text)
 
-                is ScanContract.Effect.RequestCameraPermission -> {
-                    if (cameraPermission.status.isGranted) {
-                        vm.dispatch(ScanContract.Action.OnPermissionResult(true))
-                    } else {
-                        cameraPermission.launchPermissionRequest()
-                    }
+            is ScanContract.Effect.RequestCameraPermission -> {
+                if (cameraPermission.status.isGranted) {
+                    vm.dispatch(ScanContract.Action.OnPermissionResult(true))
+                } else {
+                    cameraPermission.launchPermissionRequest()
                 }
             }
         }

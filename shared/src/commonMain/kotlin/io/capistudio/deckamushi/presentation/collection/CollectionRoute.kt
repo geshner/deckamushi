@@ -1,10 +1,10 @@
 package io.capistudio.deckamushi.presentation.collection
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.paging.compose.collectAsLazyPagingItems
+import io.capistudio.deckamushi.presentation.components.CollectEffects
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -15,12 +15,10 @@ fun CollectionRoute(
     val vm: CollectionViewModel = koinViewModel()
     val state by vm.state.collectAsState()
 
-    LaunchedEffect(Unit) {
-        vm.effects.collect { effect ->
-            when (effect) {
-                is CollectionContract.Effect.ShowMessage -> showSnackbar(effect.message)
-                is CollectionContract.Effect.NavigateToDetail -> onNavigateToDetail(effect.id)
-            }
+    CollectEffects(vm.effects) { effect ->
+        when (effect) {
+            is CollectionContract.Effect.ShowMessage -> showSnackbar(effect.message)
+            is CollectionContract.Effect.NavigateToDetail -> onNavigateToDetail(effect.id)
         }
     }
 
