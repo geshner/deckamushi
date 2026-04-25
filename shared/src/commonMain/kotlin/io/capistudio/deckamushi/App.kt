@@ -2,7 +2,6 @@ package io.capistudio.deckamushi
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -18,8 +17,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import deckamushi.shared.generated.resources.Res
+import deckamushi.shared.generated.resources.app_name
+import deckamushi.shared.generated.resources.title_card_detail
+import deckamushi.shared.generated.resources.title_card_list
+import deckamushi.shared.generated.resources.title_my_collection
+import deckamushi.shared.generated.resources.title_scan
+import deckamushi.shared.generated.resources.title_scan_result
+import deckamushi.shared.generated.resources.title_sync
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
-import io.capistudio.deckamushi.presentation.cards.CardListViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionRoute
 import io.capistudio.deckamushi.presentation.components.DeckamushiTopAppBar
 import io.capistudio.deckamushi.presentation.detail.CardDetailRoute
@@ -30,7 +36,7 @@ import io.capistudio.deckamushi.presentation.scan.ScanRoute
 import io.capistudio.deckamushi.presentation.sync.SyncRoute
 import io.capistudio.deckamushi.presentation.theme.DeckamushiTheme
 import kotlinx.coroutines.launch
-import org.koin.compose.viewmodel.koinViewModel
+import org.jetbrains.compose.resources.stringResource
 
 
 /**
@@ -49,14 +55,14 @@ fun App() {
     val canGoBack = navController.previousBackStackEntry != null
 
     val title = when {
-        currentDestination?.hasRoute<Screen.Home>() == true -> "Deckamushi"
-        currentDestination?.hasRoute<Screen.CardList>() == true -> "All Cards"
-        currentDestination?.hasRoute<Screen.Collection>() == true -> "My Collection"
-        currentDestination?.hasRoute<Screen.Sync>() == true -> "Sync Data"
-        currentDestination?.hasRoute<Screen.CardDetail>() == true -> "Card Detail"
-        currentDestination?.hasRoute<Screen.Scanner>() == true -> ""
-        currentDestination?.hasRoute<Screen.ScanResults>() == true -> "Pick your card"
-        else -> "Deckamushi"
+        currentDestination?.hasRoute<Screen.Home>() == true -> stringResource(Res.string.app_name)
+        currentDestination?.hasRoute<Screen.CardList>() == true -> stringResource(Res.string.title_card_list)
+        currentDestination?.hasRoute<Screen.Collection>() == true -> stringResource(Res.string.title_my_collection)
+        currentDestination?.hasRoute<Screen.Sync>() == true -> stringResource(Res.string.title_sync)
+        currentDestination?.hasRoute<Screen.CardDetail>() == true -> stringResource(Res.string.title_card_detail)
+        currentDestination?.hasRoute<Screen.Scanner>() == true -> stringResource(Res.string.title_scan)
+        currentDestination?.hasRoute<Screen.ScanResults>() == true -> stringResource(Res.string.title_scan_result)
+        else -> ""
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -66,7 +72,7 @@ fun App() {
     }
     // Allows a route to temporarily replace default app-bar back behavior without moving
     // navigation logic into the top app bar itself. Currently used by CardDetail scan flow.
-    val backOverride = remember { mutableStateOf<(() -> Unit)?>(null)  }
+    val backOverride = remember { mutableStateOf<(() -> Unit)?>(null) }
 
     DeckamushiTheme {
         Scaffold(

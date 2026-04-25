@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Deckamushi</string>
+
+    <!-- Screen Titles -->
+    <string name="title_my_collection">My Collection</string>
+    <string name="title_card_list">All Cards</string>
+    <string name="title_sync">Sync Data</string>
+    <string name="title_card_detail">Card Detail</string>
+    <string name="title_scan_result">Pick your card</string>
+    <string name="title_scan">Scan Card</string>
+
+    <!-- Actions/Buttons -->
+    <string name="action_search_hint">Search by name</string>
+    <string name="action_sync">Sync/Seed cards</string>
+    <string name="action_increment">+</string>
+    <string name="action_decrement">-</string>
+
+
+    <!-- Status / Messages -->
+    <string name="error_loading_cards">Error loading cards.</string>
+
+
+</resources>
