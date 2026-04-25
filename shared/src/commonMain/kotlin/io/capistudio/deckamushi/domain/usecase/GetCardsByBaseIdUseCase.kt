@@ -1,6 +1,5 @@
 package io.capistudio.deckamushi.domain.usecase
 
-import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import io.capistudio.deckamushi.domain.util.DomainResult

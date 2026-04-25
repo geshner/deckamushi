@@ -3,6 +3,7 @@ package io.capistudio.deckamushi.domain.repository
 import androidx.paging.PagingSource
 import app.cash.sqldelight.paging3.QueryPagingSource
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
+import io.capistudio.deckamushi.data.mapper.CardMapper.toCard
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
 import kotlinx.coroutines.Dispatchers
@@ -33,19 +34,10 @@ interface CardRepository {
 class CardRepositoryImpl(
     dbProvider: AppDatabaseProvider,
 ) : CardRepository {
-    val db = dbProvider.db
+    private val db = dbProvider.db
 
     override suspend fun getCardById(id: String): Card? {
-        return db.cardQueries.getCardById(id).executeAsOneOrNull()
-            ?.let { r ->
-                Card(
-                    id = r.id,
-                    baseId = r.base_id,
-                    variant = r.variant,
-                    name = r.name,
-                    imageUrl = r.image_url,
-                )
-            }
+        return db.cardQueries.getCardById(id).executeAsOneOrNull()?.toCard()
     }
 
     override suspend fun getCardsCount(): Long {
@@ -153,7 +145,7 @@ class CardRepositoryImpl(
 
     override suspend fun getCardsByBaseId(baseId: String): List<CardSummary> {
         // Scanner flow works from base id first, then lets the user choose a specific variant.
-        val results = db.cardQueries.getCardsByBaseId(baseId)
+        return db.cardQueries.getCardsByBaseId(baseId)
             .executeAsList()
             .map { r ->
                 CardSummary(
@@ -164,7 +156,5 @@ class CardRepositoryImpl(
                     ownedCount = r.owned_count
                 )
             }
-
-        return results
     }
 }

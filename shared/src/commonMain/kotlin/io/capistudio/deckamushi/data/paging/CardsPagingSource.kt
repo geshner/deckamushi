@@ -2,7 +2,6 @@ package io.capistudio.deckamushi.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.domain.repository.CardRepository
 

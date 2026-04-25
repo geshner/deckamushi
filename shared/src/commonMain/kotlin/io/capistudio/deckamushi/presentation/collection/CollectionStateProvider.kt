@@ -2,7 +2,6 @@ package io.capistudio.deckamushi.presentation.collection
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.capistudio.deckamushi.domain.model.CardSummary
-import io.capistudio.deckamushi.domain.model.OwnedCard
 
 // 1. Data class for Preview
 data class CollectionPreviewState(

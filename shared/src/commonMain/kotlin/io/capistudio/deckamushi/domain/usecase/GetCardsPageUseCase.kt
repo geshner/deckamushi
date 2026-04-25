@@ -4,7 +4,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import io.capistudio.deckamushi.data.paging.CardsPagingSource
-import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import kotlinx.coroutines.flow.Flow

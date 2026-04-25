@@ -1,50 +1,24 @@
 package io.capistudio.deckamushi.data.mapper
 
 import io.capistudio.deckamushi.data.remote.dto.CardDto
+import io.capistudio.deckamushi.domain.model.CardColor
+import io.capistudio.deckamushi.domain.model.toRarity
 
 object CardDtoMapper {
 
-    // Bitmask values (you can change later, just keep them power-of-two)
-    //TODO ADD PROPER CODE
-    private const val COLOR_RED = 1 shl 0
-    private const val COLOR_GREEN = 1 shl 1
-    private const val COLOR_BLUE = 1 shl 2
-    private const val COLOR_PURPLE = 1 shl 3
-    private const val COLOR_BLACK = 1 shl 4
-    private const val COLOR_YELLOW = 1 shl 5
-
-    fun colorFlagsToBitmask(color: String): Int {
-        val parts = color.split('/')
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
-
-        var mask = 0
-        parts.forEach {
-            mask = mask or when (it.lowercase()) {
-                "赤" -> COLOR_RED
-                "緑" -> COLOR_GREEN
-                "青" -> COLOR_BLUE
-                "紫" -> COLOR_PURPLE
-                "黒" -> COLOR_BLACK
-                "黄" -> COLOR_YELLOW
+    fun colorFlagsToBitmask(color: String): Int = color.split('/')
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .fold(0) { acc, part ->
+            acc or when (part) {
+                "赤" -> CardColor.RED.bit
+                "緑" -> CardColor.GREEN.bit
+                "青" -> CardColor.BLUE.bit
+                "紫" -> CardColor.PURPLE.bit
+                "黒" -> CardColor.BLACK.bit
+                "黄" -> CardColor.YELLOW.bit
                 else -> 0
             }
-        }
-        return mask
-    }
-
-    fun rarityToId(rarity: String): Int =
-        when (rarity.trim().uppercase()) {
-            "C" -> 1
-            "UC" -> 2
-            "R" -> 3
-            "SR" -> 4
-            "L" -> 5
-            "SEC" -> 6
-            "SP" -> 7
-            "TR" -> 8
-            "PR" -> 9
-            else -> 0
         }
 
     fun CardDto.toDbModel(): CardDbRow = CardDbRow(
@@ -53,7 +27,7 @@ object CardDtoMapper {
         variant = variant,
         name = name,
         colorFlags = colorFlagsToBitmask(colorFlags),
-        rarityId = rarityToId(rarity),
+        rarityId = rarity.toRarity().id,
         cardCategory = cardType,
         attackPower = attackPower,
         counterPower = counterPower,

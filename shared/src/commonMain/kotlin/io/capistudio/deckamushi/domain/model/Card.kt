@@ -5,16 +5,19 @@ data class Card(
     val baseId: String,
     val variant: String?,
     val name: String,
-//    val colorFlags: Int,
-//    val rarityId: Int,
-//    val cardCategory: String,
-//    val attackPower: Int?,
-//    val counterPower: Int?,
-//    val life: Int?,
-//    val combatAttribute: String?,
-//    val feature: String?,
-//    val cardText: String?,
-//    val blockIconCode: String?,
-//    val packName: String?,
-    val imageUrl: String?,
-)
+    val colors: Set<CardColor>,
+    val rarity: Rarity,
+    val cardType: CardType,
+    val attackPower: Long?,
+    val counterPower: Long?,
+    val life: Long?,
+    val combatAttribute: String?,
+    val feature: String?,
+    val cardText: String?,
+    val blockIconCode: String?,
+    val packName: String?,
+    val imageUrl: String,
+) {
+    val isReprint: Boolean
+        get() = variant?.startsWith("r", true) == true
+}
