@@ -1,6 +1,7 @@
 package io.capistudio.deckamushi.presentation.cards
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -15,6 +16,10 @@ fun CardListRoute(
     val vm: CardListViewModel = koinViewModel()
     val state by vm.state.collectAsState()
     val pagingItems = vm.cardsPagingData.collectAsLazyPagingItems()
+
+    LaunchedEffect(Unit) {
+        vm.dispatch(CardsListContract.Action.OnStart)
+    }
 
     CollectEffects(vm.effects) { effect ->
         when (effect) {

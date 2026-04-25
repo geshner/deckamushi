@@ -1,6 +1,7 @@
 package io.capistudio.deckamushi.presentation.scan
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import io.capistudio.deckamushi.presentation.components.CollectEffects
@@ -20,6 +21,10 @@ fun ScanResultsRoute(
 ) {
     val vm: ScanResultsViewModel = koinViewModel(parameters = { parametersOf(baseId) })
     val state by vm.state.collectAsState()
+
+    LaunchedEffect(baseId) {
+        vm.dispatch(ScanResultsContract.Action.OnStart)
+    }
 
     CollectEffects(vm.effects) { effect ->
         when (effect) {

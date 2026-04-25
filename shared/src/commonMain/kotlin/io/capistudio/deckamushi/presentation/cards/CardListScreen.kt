@@ -44,10 +44,6 @@ fun CardListScreen(
         initialFirstVisibleItemScrollOffset = state.scrollOffset
     )
 
-    LaunchedEffect(Unit) {
-        onAction(Action.OnStart)
-    }
-
     LaunchedEffect(gridState) {
         snapshotFlow { gridState.firstVisibleItemIndex to gridState.firstVisibleItemScrollOffset }
             .distinctUntilChanged()

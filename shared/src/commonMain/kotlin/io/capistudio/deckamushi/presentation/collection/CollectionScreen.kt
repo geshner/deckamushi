@@ -29,7 +29,6 @@ import io.capistudio.deckamushi.presentation.components.CardGrid
 import io.capistudio.deckamushi.presentation.components.CardGridItem
 import io.capistudio.deckamushi.presentation.components.OwnedBadge
 import io.capistudio.deckamushi.presentation.theme.DeckamushiPreview
-import io.capistudio.deckamushi.presentation.theme.DeckamushiTheme
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
 import io.capistudio.deckamushi.presentation.theme.ThemePreviewsWithSystemUI
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -47,10 +46,6 @@ fun CollectionScreen(
         initialFirstVisibleItemIndex = state.scrollIndex,
         initialFirstVisibleItemScrollOffset = state.scrollOffset
     )
-
-    LaunchedEffect(Unit) {
-        onAction(Action.OnStart)
-    }
 
     LaunchedEffect(gridState) {
         snapshotFlow { gridState.firstVisibleItemIndex to gridState.firstVisibleItemScrollOffset }

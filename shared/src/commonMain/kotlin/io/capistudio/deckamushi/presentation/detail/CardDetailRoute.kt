@@ -2,6 +2,7 @@ package io.capistudio.deckamushi.presentation.detail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import io.capistudio.deckamushi.presentation.components.CollectEffects
@@ -39,6 +40,10 @@ fun CardDetailRoute(
     // Mirrors the same scan-aware back behavior for gesture/system back.
     PlatformBackHandler {
         vm.dispatch(CardDetailContract.Action.BackClicked)
+    }
+
+    LaunchedEffect(cardId) {
+        vm.dispatch(CardDetailContract.Action.OnStart)
     }
 
     CollectEffects(vm.effects) { effect ->

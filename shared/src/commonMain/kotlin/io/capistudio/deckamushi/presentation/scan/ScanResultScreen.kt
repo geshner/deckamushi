@@ -13,10 +13,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.presentation.components.RemoteImage
 import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_ASPECT_RATIO
 import io.capistudio.deckamushi.presentation.theme.Dimensions.CARD_GRID_COLUMNS
@@ -27,17 +25,13 @@ fun ScanResultScreen(
     state: ScanResultsContract.State,
     onAction: (ScanResultsContract.Action) -> Unit,
 ) {
-
-    LaunchedEffect(Unit) {
-        onAction(ScanResultsContract.Action.OnStart)
-    }
-
     when {
         state.isLoading -> CircularProgressIndicator()
         state.error != null -> Text(
             text = state.error,
             color = MaterialTheme.colorScheme.error
         )
+
         else -> LazyVerticalGrid(
             columns = GridCells.Fixed(CARD_GRID_COLUMNS),
             contentPadding = PaddingValues(paddingSmall),
