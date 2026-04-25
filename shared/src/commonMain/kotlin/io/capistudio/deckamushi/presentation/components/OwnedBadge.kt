@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -11,31 +12,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.presentation.theme.DeckamushiTheme
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
+import io.capistudio.deckamushi.presentation.theme.ThemePreviews
 
 @Composable
 fun OwnedBadge(
-    ownedQuantity: Int? = null,
+    ownedCount: Int? = null,
     modifier: Modifier = Modifier,
 ) {
-    ownedQuantity ?: return
+    if (ownedCount == null || ownedCount <= 0) return
     Surface(
-        color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.9f),
+        color = MaterialTheme.colorScheme.tertiary,
         shape = CircleShape,
-        modifier = modifier.padding(paddingSmall)
+        modifier = modifier.padding(paddingSmall),
+        border = BorderStroke(
+            1.5.dp,
+            MaterialTheme.colorScheme.background.copy(alpha = 0.8f)),
+
+        shadowElevation = 6.dp
     ) {
 
         Text(
-            text = "x${ownedQuantity}",
-            style = MaterialTheme.typography.labelLarge,
+            text = "x${ownedCount}",
+            style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
         )
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 fun OwnedBadgePreview() {
     DeckamushiTheme {
-        OwnedBadge(ownedQuantity = 10)
+        OwnedBadge(ownedCount = 10)
     }
 }
