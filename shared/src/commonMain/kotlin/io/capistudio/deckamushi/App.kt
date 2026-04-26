@@ -18,13 +18,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import deckamushi.shared.generated.resources.Res
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import deckamushi.shared.generated.resources.app_name
 import deckamushi.shared.generated.resources.title_card_detail
 import deckamushi.shared.generated.resources.title_card_list
 import deckamushi.shared.generated.resources.title_my_collection
 import deckamushi.shared.generated.resources.title_scan
 import deckamushi.shared.generated.resources.title_scan_result
-import deckamushi.shared.generated.resources.title_sync
+import deckamushi.shared.generated.resources.title_settings
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
 import io.capistudio.deckamushi.presentation.collection.CollectionRoute
 import io.capistudio.deckamushi.presentation.components.DeckamushiTopAppBar
@@ -33,7 +37,7 @@ import io.capistudio.deckamushi.presentation.home.HomeScreen
 import io.capistudio.deckamushi.presentation.navigation.Screen
 import io.capistudio.deckamushi.presentation.scan.ScanResultsRoute
 import io.capistudio.deckamushi.presentation.scan.ScanRoute
-import io.capistudio.deckamushi.presentation.sync.SyncRoute
+import io.capistudio.deckamushi.presentation.settings.SettingsRoute
 import io.capistudio.deckamushi.presentation.theme.GrandLineTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -58,7 +62,7 @@ fun App() {
         currentDestination?.hasRoute<Screen.Home>() == true -> stringResource(Res.string.app_name)
         currentDestination?.hasRoute<Screen.CardList>() == true -> stringResource(Res.string.title_card_list)
         currentDestination?.hasRoute<Screen.Collection>() == true -> stringResource(Res.string.title_my_collection)
-        currentDestination?.hasRoute<Screen.Sync>() == true -> stringResource(Res.string.title_sync)
+        currentDestination?.hasRoute<Screen.Settings>() == true -> stringResource(Res.string.title_settings)
         currentDestination?.hasRoute<Screen.CardDetail>() == true -> stringResource(Res.string.title_card_detail)
         currentDestination?.hasRoute<Screen.Scanner>() == true -> stringResource(Res.string.title_scan)
         currentDestination?.hasRoute<Screen.ScanResults>() == true -> stringResource(Res.string.title_scan_result)
@@ -78,14 +82,25 @@ fun App() {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
+                val showSettingsAction = currentDestination?.hasRoute<Screen.Settings>() != true
+                    && currentDestination?.hasRoute<Screen.Scanner>() != true
+
                 DeckamushiTopAppBar(
                     title = title,
                     canGoBack = canGoBack,
                     onBackClick = {
-                        // Prefer route-specific back handling when present; otherwise perform the
-                        // normal one-step back stack pop.
                         backOverride.value?.invoke() ?: navController.popBackStack()
                     },
+                    actions = {
+                        if (showSettingsAction) {
+                            IconButton(onClick = { navController.navigate(Screen.Settings) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings"
+                                )
+                            }
+                        }
+                    }
                 )
             }
         ) { padding ->
@@ -98,7 +113,6 @@ fun App() {
                         HomeScreen(
                             onOpenCards = { navController.navigate(Screen.CardList) },
                             onOpenCollection = { navController.navigate(Screen.Collection) },
-                            onOpenSync = { navController.navigate(Screen.Sync) },
                             onOpenScanner = { navController.navigate(Screen.Scanner) },
                         )
                     }
@@ -121,11 +135,8 @@ fun App() {
                         )
                     }
 
-                    composable<Screen.Sync> {
-                        // When Sync finishes, return to Home (hub).
-                        SyncRoute(showSnackbar = showSnackbar) {
-                            navController.popBackStack()
-                        }
+                    composable<Screen.Settings> {
+                        SettingsRoute(showSnackbar = showSnackbar)
                     }
 
                     composable<Screen.CardDetail> { backStackEntry ->

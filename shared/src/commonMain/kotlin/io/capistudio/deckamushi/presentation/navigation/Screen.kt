@@ -7,7 +7,7 @@ sealed interface Screen {
     @Serializable
     object Home : Screen
     @Serializable
-    data object Sync: Screen
+    data object Settings : Screen
     @Serializable
     data object CardList: Screen
     @Serializable

@@ -1,5 +1,6 @@
 package io.capistudio.deckamushi.presentation.components
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +15,8 @@ import androidx.compose.runtime.Composable
 fun DeckamushiTopAppBar(
     title: String,
     canGoBack: Boolean,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = { Text(title) },
@@ -27,6 +29,7 @@ fun DeckamushiTopAppBar(
                     )
                 }
             }
-        }
+        },
+        actions = actions,
     )
 }

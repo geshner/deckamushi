@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.dp
 fun HomeScreen(
     onOpenCards: () -> Unit,
     onOpenCollection: () -> Unit,
-    onOpenSync: () -> Unit,
     onOpenScanner: () -> Unit,
 ) {
     Column(
@@ -50,7 +48,7 @@ fun HomeScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     onClick = onOpenCards,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).aspectRatio(1f)
                 )
                 HomeNavCard(
                     icon = Icons.Default.Favorite,
@@ -59,32 +57,18 @@ fun HomeScreen(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     onClick = onOpenCollection,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).aspectRatio(1f)
                 )
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                HomeNavCard(
-                    icon = Icons.Default.Search,
-                    title = "Scanner",
-                    subtitle = "Scan cards to add them",
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                    onClick = onOpenScanner,
-                    modifier = Modifier.weight(1f)
-                )
-                HomeNavCard(
-                    icon = Icons.Default.Refresh,
-                    title = "Sync Data",
-                    subtitle = "Update card database",
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    onClick = onOpenSync,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            HomeNavCard(
+                icon = Icons.Default.Search,
+                title = "Scanner",
+                subtitle = "Scan cards to add them",
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                onClick = onOpenScanner,
+                modifier = Modifier.fillMaxWidth().aspectRatio(3f)
+            )
         }
     }
 }
@@ -101,7 +85,7 @@ private fun HomeNavCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.aspectRatio(1f),
+        modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         color = containerColor,
         contentColor = contentColor
