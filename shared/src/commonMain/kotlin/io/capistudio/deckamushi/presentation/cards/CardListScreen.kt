@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,13 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.presentation.cards.CardsListContract.Action
-import io.capistudio.deckamushi.presentation.collection.CollectionContract
 import io.capistudio.deckamushi.presentation.components.CardGrid
 import io.capistudio.deckamushi.presentation.components.CardGridItem
-import io.capistudio.deckamushi.presentation.components.OwnedBadge
 import io.capistudio.deckamushi.presentation.components.ReprintBanner
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingLarge
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
@@ -107,7 +105,7 @@ fun CardListScreen(
 
             // 2. Loading State (Initial)
             if (pagingItems.loadState.refresh is LoadState.Loading) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
@@ -116,7 +114,7 @@ fun CardListScreen(
 
             // 3. Appending State (Bottom Loading)
             if (pagingItems.loadState.append is LoadState.Loading) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(paddingLarge),
                         horizontalArrangement = Arrangement.Center
