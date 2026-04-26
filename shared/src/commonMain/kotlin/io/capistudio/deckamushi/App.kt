@@ -34,7 +34,7 @@ import io.capistudio.deckamushi.presentation.navigation.Screen
 import io.capistudio.deckamushi.presentation.scan.ScanResultsRoute
 import io.capistudio.deckamushi.presentation.scan.ScanRoute
 import io.capistudio.deckamushi.presentation.sync.SyncRoute
-import io.capistudio.deckamushi.presentation.theme.DeckamushiTheme
+import io.capistudio.deckamushi.presentation.theme.GrandLineTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -74,7 +74,7 @@ fun App() {
     // navigation logic into the top app bar itself. Currently used by CardDetail scan flow.
     val backOverride = remember { mutableStateOf<(() -> Unit)?>(null) }
 
-    DeckamushiTheme {
+    GrandLineTheme {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {

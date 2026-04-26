@@ -18,7 +18,7 @@ annotation class ThemePreviews
 
 @Composable
 fun DeckamushiPreview(content: @Composable () -> Unit) {
-    DeckamushiTheme {
+    GrandLineTheme {
         Surface {
             content()
         }

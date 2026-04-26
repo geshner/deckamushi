@@ -43,19 +43,6 @@ getCardById:
 SELECT * FROM cards
 WHERE id = ?;
 
-getAllCardsWithOwnership:
-SELECT
-  c.id, c.name, c.image_url, c.variant,
-  COALESCE(col.quantity, 0) AS owned_count,
-  CASE
-    WHEN COALESCE(col.quantity, 0) > 0 THEN 1
-    ELSE 0
-  END AS is_owned
-FROM cards c
-LEFT JOIN collection col
-  ON col.card_id = c.id
-ORDER BY c.base_id, c.variant;
-
 getCardsPage:
 SELECT id, name, image_url, variant
 FROM cards

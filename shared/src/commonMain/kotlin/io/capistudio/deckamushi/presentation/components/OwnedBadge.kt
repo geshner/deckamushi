@@ -8,9 +8,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.capistudio.deckamushi.presentation.theme.DeckamushiTheme
+import io.capistudio.deckamushi.presentation.theme.DeckamushiPreview
 import io.capistudio.deckamushi.presentation.theme.Dimensions.paddingSmall
 import io.capistudio.deckamushi.presentation.theme.ThemePreviews
 
@@ -26,7 +25,8 @@ fun OwnedBadge(
         modifier = modifier.padding(paddingSmall),
         border = BorderStroke(
             1.5.dp,
-            MaterialTheme.colorScheme.background.copy(alpha = 0.8f)),
+            MaterialTheme.colorScheme.background.copy(alpha = 0.8f)
+        ),
         contentColor = MaterialTheme.colorScheme.onTertiary,
         shadowElevation = 6.dp
     ) {
@@ -42,7 +42,7 @@ fun OwnedBadge(
 @ThemePreviews
 @Composable
 fun OwnedBadgePreview() {
-    DeckamushiTheme {
+    DeckamushiPreview {
         OwnedBadge(ownedCount = 10)
     }
 }
