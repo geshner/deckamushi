@@ -37,3 +37,14 @@ WHERE card_id = ?
 getAllOwned:
 SELECT card_id, quantity
 FROM collection;
+
+upsertOwned:
+INSERT OR REPLACE INTO collection(card_id, quantity)
+VALUES (:card_id, :qunatity);
+
+mergeOwned:
+INSERT OR REPLACE INTO collection(card_id, quantity)
+VALUES (
+    :card_id,
+    MAX(:quantity, COALESCE((SELECT quantity FROM collection WHERE card_id = :card_id), 0))
+);

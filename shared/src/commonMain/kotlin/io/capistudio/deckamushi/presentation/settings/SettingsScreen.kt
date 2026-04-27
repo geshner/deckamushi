@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -23,22 +24,51 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.capistudio.deckamushi.domain.usecase.ImportMode
 import io.capistudio.deckamushi.presentation.sync.SyncContract
 import io.capistudio.deckamushi.presentation.sync.SyncStatus
 
 @Composable
 fun SettingsScreen(
     syncState: SyncContract.State,
+    settingsState: SettingsContract.State,
     onSyncAction: (SyncContract.Action) -> Unit,
     onExportClick: () -> Unit,
     onImportClick: () -> Unit,
-) {
+    onSettingsAction: (SettingsContract.Action) -> Unit,
+    filePicker: () -> Unit,
+    ) {
+    if (settingsState.showImportDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                onSettingsAction(SettingsContract.Action.ImportCancelled) },
+            title = { Text("Import Collection") },
+            text = {
+                Text("How should existing card quantities be handled?\n\n•Overwrite — replaces all current quantities\n• Merge — keeps the higher quantity for each card")
+            },
+            confirmButton = {
+                TextButton(onClick = { onSettingsAction(SettingsContract.Action.ImportConfirmed(ImportMode.OVERWRITE)) }) {
+                    Text("Overwrite")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    onSettingsAction(SettingsContract.Action.ImportConfirmed(ImportMode.MERGE))
+                }) {
+                    Text("Merge")
+                }
+            }
+        )
+
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +95,7 @@ fun SettingsScreen(
                 icon = Icons.Default.Download,
                 title = "Import Collection",
                 subtitle = "Restore owned cards from a backup file",
-                onClick = onImportClick
+                onClick = filePicker
             )
         }
     }

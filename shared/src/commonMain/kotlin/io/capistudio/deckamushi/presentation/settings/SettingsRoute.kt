@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import io.capistudio.deckamushi.presentation.components.CollectEffects
+import io.capistudio.deckamushi.presentation.components.rememberFilePicker
 import io.capistudio.deckamushi.presentation.components.rememberShareLauncher
+import io.capistudio.deckamushi.presentation.settings.SettingsContract.Action
 import io.capistudio.deckamushi.presentation.sync.SyncContract
 import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -23,6 +25,9 @@ fun SettingsRoute(
         onComplete = { showSnackbar("Collection exported successfully") }
     )
 
+    val filePicker = rememberFilePicker { json ->
+        settingsVm.dispatch(Action.FilePickResult(json))
+    }
     CollectEffects(syncVm.effects) { effect ->
         when (effect) {
             is SyncContract.Effect.ShowMessage -> showSnackbar(effect.message)
@@ -43,10 +48,13 @@ fun SettingsRoute(
 
     SettingsScreen(
         syncState = syncState,
+        settingsState = settingState,
         onSyncAction = syncVm::dispatch,
         onExportClick = {
             settingsVm.dispatch(SettingsContract.Action.ExportClick)
         },
         onImportClick = { /* Step 5 */ },
+        onSettingsAction = settingsVm::dispatch,
+        filePicker = filePicker
     )
 }

@@ -14,6 +14,7 @@ import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedCardsUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedTotalUseCase
+import io.capistudio.deckamushi.domain.usecase.ImportCollectionUseCase
 import io.capistudio.deckamushi.domain.usecase.IncrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardListViewModel
@@ -61,6 +62,7 @@ private val sharedModule = module {
     factoryOf(::GetOwnedTotalUseCase)
     factoryOf(::GetCardsByBaseIdUseCase)
     factoryOf(::ExportCollectionUseCase)
+    factoryOf(::ImportCollectionUseCase)
 
     // ViewModels
     viewModelOf(::CardListViewModel)

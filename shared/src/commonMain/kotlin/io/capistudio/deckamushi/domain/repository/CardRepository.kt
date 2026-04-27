@@ -6,6 +6,8 @@ import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.mapper.CardMapper.toCard
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
+import io.capistudio.deckamushi.domain.model.OwnedCardExport
+import io.capistudio.deckamushi.domain.usecase.ImportMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -29,6 +31,8 @@ interface CardRepository {
     fun getOwnedCardsPagingSource(): PagingSource<Int, CardSummary>
     suspend fun getCardsByBaseId(baseId: String): List<CardSummary>
     suspend fun getAllOwned(): List<Pair<String, Long>>
+    suspend fun cardExists(cardId: String): Boolean
+    suspend fun importOwned(entries: List<OwnedCardExport>, mode: ImportMode)
 }
 
 /** SQLDelight-backed implementation of [CardRepository]. */
@@ -164,5 +168,30 @@ class CardRepositoryImpl(
             .getAllOwned()
             .executeAsList()
             .map { Pair(it.card_id, it.quantity) }
+    }
+
+    override suspend fun cardExists(cardId: String): Boolean =
+        db.cardQueries.cardExists(cardId).executeAsOne()
+
+    override suspend fun importOwned(
+        entries: List<OwnedCardExport>,
+        mode: ImportMode
+    ) {
+        db.transaction {
+            entries.forEach { entry ->
+                when (mode) {
+                    ImportMode.OVERWRITE -> upsertOwned(entry.cardId, entry.quantity)
+                    ImportMode.MERGE -> mergeOwned(entry.cardId, entry.quantity)
+                }
+            }
+        }
+    }
+
+    private fun upsertOwned(cardId: String, quantity: Long) {
+        db.collectionQueries.upsertOwned(cardId, quantity)
+    }
+
+    private fun mergeOwned(cardId: String, quantity: Long) {
+        db.collectionQueries.mergeOwned(cardId, quantity)
     }
 }

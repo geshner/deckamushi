@@ -86,3 +86,6 @@ LEFT JOIN collection col
   ON col.card_id = c.id
 WHERE c.base_id = :baseId
 ORDER BY variant;
+
+cardExists:
+SELECT EXISTS (SELECT 1 FROM cards WHERE id = :id);
