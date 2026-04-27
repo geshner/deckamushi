@@ -7,54 +7,34 @@ import io.capistudio.deckamushi.presentation.components.CollectEffects
 import io.capistudio.deckamushi.presentation.components.rememberFilePicker
 import io.capistudio.deckamushi.presentation.components.rememberShareLauncher
 import io.capistudio.deckamushi.presentation.settings.SettingsContract.Action
-import io.capistudio.deckamushi.presentation.sync.SyncContract
-import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsRoute(
     showSnackbar: (String) -> Unit,
 ) {
-    val syncVm: SyncViewModel = koinViewModel()
-    val syncState by syncVm.state.collectAsState()
-
-    val settingsVm: SettingsViewModel = koinViewModel()
-    val settingState by settingsVm.state.collectAsState()
+    val vm: SettingsViewModel = koinViewModel()
+    val state by vm.state.collectAsState()
 
     val shareLauncher = rememberShareLauncher(
         onComplete = { showSnackbar("Collection exported successfully") }
     )
 
     val filePicker = rememberFilePicker { json ->
-        settingsVm.dispatch(Action.FilePickResult(json))
-    }
-    CollectEffects(syncVm.effects) { effect ->
-        when (effect) {
-            is SyncContract.Effect.ShowMessage -> showSnackbar(effect.message)
-            else -> Unit
-        }
+        vm.dispatch(Action.FilePickResult(json))
     }
 
-    CollectEffects(settingsVm.effects) { effect ->
+    CollectEffects(vm.effects) { effect ->
         when (effect) {
-            is SettingsContract.Effect.ShareCollection -> {
-                shareLauncher(effect.json)
-            }
-            is SettingsContract.Effect.ShowMessage -> {
-                showSnackbar(effect.message)
-            }
+            is SettingsContract.Effect.ShareCollection -> shareLauncher(effect.json)
+            is SettingsContract.Effect.ShowMessage -> showSnackbar(effect.message)
         }
     }
 
     SettingsScreen(
-        syncState = syncState,
-        settingsState = settingState,
-        onSyncAction = syncVm::dispatch,
-        onExportClick = {
-            settingsVm.dispatch(SettingsContract.Action.ExportClick)
-        },
-        onImportClick = { /* Step 5 */ },
-        onSettingsAction = settingsVm::dispatch,
-        filePicker = filePicker
+        settingsState = state,
+        onExportClick = { vm.dispatch(Action.ExportClick) },
+        onSettingsAction = vm::dispatch,
+        filePicker = filePicker,
     )
 }

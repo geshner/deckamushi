@@ -32,19 +32,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.capistudio.deckamushi.domain.usecase.ImportMode
-import io.capistudio.deckamushi.presentation.sync.SyncContract
-import io.capistudio.deckamushi.presentation.sync.SyncStatus
 
 @Composable
 fun SettingsScreen(
-    syncState: SyncContract.State,
     settingsState: SettingsContract.State,
-    onSyncAction: (SyncContract.Action) -> Unit,
     onExportClick: () -> Unit,
-    onImportClick: () -> Unit,
     onSettingsAction: (SettingsContract.Action) -> Unit,
     filePicker: () -> Unit,
-    ) {
+) {
     if (settingsState.showImportDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -78,8 +73,8 @@ fun SettingsScreen(
     ) {
         SettingsSection(title = "Card Database") {
             SyncSettingsContent(
-                state = syncState,
-                onSyncClick = { onSyncAction(SyncContract.Action.SyncClicked) }
+                state = settingsState,
+                onSyncClick = { onSettingsAction(SettingsContract.Action.SyncClick) }
             )
         }
 
@@ -103,7 +98,7 @@ fun SettingsScreen(
 
 @Composable
 private fun SyncSettingsContent(
-    state: SyncContract.State,
+    state: SettingsContract.State,
     onSyncClick: () -> Unit,
 ) {
     Row(
@@ -111,18 +106,18 @@ private fun SyncSettingsContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        SyncStatusDot(state.status)
+        SyncStatusDot(state.syncStatus)
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = syncStatusLabel(state.status),
+                text = syncStatusLabel(state.syncStatus),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold
             )
-            if (state.lastSeededVersion != null) {
+            if (state.lastSyncVersion != null) {
                 Text(
-                    text = "Version ${state.lastSeededVersion}" +
-                        (state.lastSeededCount?.let { " · $it cards" } ?: ""),
+                    text = "Version ${state.lastSyncVersion}" +
+                        (state.lastSyncCount?.let { " · $it cards" } ?: ""),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -130,10 +125,10 @@ private fun SyncSettingsContent(
         }
 
         Button(
-            enabled = !state.isWorking,
+            enabled = !state.isSyncing,
             onClick = onSyncClick
         ) {
-            if (state.isWorking) {
+            if (state.isSyncing) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,

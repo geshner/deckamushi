@@ -23,7 +23,6 @@ import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.scan.ScanResultsViewModel
 import io.capistudio.deckamushi.presentation.scan.ScanViewModel
 import io.capistudio.deckamushi.presentation.settings.SettingsViewModel
-import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
@@ -66,7 +65,6 @@ private val sharedModule = module {
 
     // ViewModels
     viewModelOf(::CardListViewModel)
-    viewModelOf(::SyncViewModel)
     viewModelOf(::CollectionViewModel)
     viewModelOf(::ScanViewModel)
     viewModelOf(::SettingsViewModel)

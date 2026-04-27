@@ -1,7 +1,9 @@
 package io.capistudio.deckamushi.presentation.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSString
 import platform.Foundation.NSURL
@@ -15,7 +17,8 @@ import platform.darwin.NSObject
 
 @Composable
 actual fun rememberFilePicker(onResult: (String) -> Unit): () -> Unit {
-    val delegate = remember { DocumentPickerDelegate(onResult) }
+    val currentOnResult by rememberUpdatedState(onResult)
+    val delegate = remember { DocumentPickerDelegate { json -> currentOnResult(json) } }
     return {
         val controller = UIApplication.sharedApplication.keyWindow?.rootViewController
         val picker = UIDocumentPickerViewController(
