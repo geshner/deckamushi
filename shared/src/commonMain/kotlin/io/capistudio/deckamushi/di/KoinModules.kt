@@ -5,6 +5,7 @@ import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
 import io.capistudio.deckamushi.domain.usecase.DecrementOwnedUseCase
+import io.capistudio.deckamushi.domain.usecase.ExportCollectionUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsByBaseIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
@@ -20,6 +21,7 @@ import io.capistudio.deckamushi.presentation.collection.CollectionViewModel
 import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.scan.ScanResultsViewModel
 import io.capistudio.deckamushi.presentation.scan.ScanViewModel
+import io.capistudio.deckamushi.presentation.settings.SettingsViewModel
 import io.capistudio.deckamushi.presentation.sync.SyncViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -58,11 +60,14 @@ private val sharedModule = module {
     factoryOf(::GetOwnedCardsUseCase)
     factoryOf(::GetOwnedTotalUseCase)
     factoryOf(::GetCardsByBaseIdUseCase)
+    factoryOf(::ExportCollectionUseCase)
 
     // ViewModels
     viewModelOf(::CardListViewModel)
     viewModelOf(::SyncViewModel)
     viewModelOf(::CollectionViewModel)
+    viewModelOf(::ScanViewModel)
+    viewModelOf(::SettingsViewModel)
 
     // Detail depends on route arguments, so Koin parameters are used instead of a no-arg binding.
     viewModel { (cardId: String, fromScan: Boolean) ->
@@ -75,8 +80,6 @@ private val sharedModule = module {
             decrementOwnedUseCase = get()
         )
     }
-
-    viewModelOf(::ScanViewModel)
 
     // Scan results are keyed by scanned base id so the route provides that parameter.
     viewModel { (baseId: String) ->

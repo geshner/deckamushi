@@ -28,6 +28,7 @@ interface CardRepository {
     suspend fun getOwnedTotal(): Long
     fun getOwnedCardsPagingSource(): PagingSource<Int, CardSummary>
     suspend fun getCardsByBaseId(baseId: String): List<CardSummary>
+    suspend fun getAllOwned(): List<Pair<String, Long>>
 }
 
 /** SQLDelight-backed implementation of [CardRepository]. */
@@ -156,5 +157,12 @@ class CardRepositoryImpl(
                     ownedCount = r.owned_count
                 )
             }
+    }
+
+    override suspend fun getAllOwned(): List<Pair<String, Long>> {
+        return db.collectionQueries
+            .getAllOwned()
+            .executeAsList()
+            .map { Pair(it.card_id, it.quantity) }
     }
 }

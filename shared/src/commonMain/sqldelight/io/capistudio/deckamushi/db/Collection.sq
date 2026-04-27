@@ -34,3 +34,6 @@ SET quantity = quantity - 1
 WHERE card_id = ?
   AND quantity > 1;
 
+getAllOwned:
+SELECT card_id, quantity
+FROM collection;
