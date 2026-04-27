@@ -21,7 +21,7 @@ class ImportCollectionUseCase(
 
         val unknownIds = entries.filter { !repository.cardExists(it.cardId) }
         if (unknownIds.isNotEmpty()) {
-            DomainResult.Error("${unknownIds.size} card(s) not found in the database. Please sync first.")
+            error("${unknownIds.size} card(s) not found in the database. Please sync first.")
         }
 
         repository.importOwned(entries, mode)
