@@ -11,17 +11,18 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.etag
 
 class DeckamushiDataApi(
     private val client: HttpClient,
-){
+) : CardDataApi {
 
     private suspend fun githubGet(path: String, eTag: String? = null): HttpResponse {
         val url = BuildKonfig.BASE_URL.trimEnd('/') + "/" + path
 
         return client.get(url) {
-            header(HttpHeaders.Authorization, "Bearer ${BuildKonfig.API_KEY}")
+            if (!BuildKonfig.IS_DEMO) {
+                header(HttpHeaders.Authorization, "Bearer ${BuildKonfig.API_KEY}")
+            }
             header(HttpHeaders.Accept, "application/vnd.github.raw+json")
             header(HttpHeaders.UserAgent, "Deckamushi")
 
@@ -31,7 +32,7 @@ class DeckamushiDataApi(
         }
     }
 
-    suspend fun fetchVersion(etag: String? = null): RemoteResult<VersionDto> {
+    override suspend fun fetchVersion(etag: String?): RemoteResult<VersionDto> {
         val path = "version.json"
         return try {
             val response = githubGet(path, etag)
@@ -53,7 +54,7 @@ class DeckamushiDataApi(
         }
     }
 
-    suspend fun fetchCards(): RemoteResult<List<CardDto>> {
+    override suspend fun fetchCards(): RemoteResult<List<CardDto>> {
         val path = "cards.json"
         return try {
             val response = githubGet(path)

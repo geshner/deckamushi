@@ -1,6 +1,7 @@
 package io.capistudio.deckamushi.di
 
 import io.capistudio.deckamushi.core.network.createHttpClient
+import io.capistudio.deckamushi.data.remote.CardDataApi
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
@@ -42,7 +43,7 @@ expect fun platformModule(): Module
 private val sharedModule = module {
     //Platform-independent logic )Ktor
     single { createHttpClient() }
-    singleOf(::DeckamushiDataApi)
+    singleOf(::DeckamushiDataApi) { bind<CardDataApi>() }
 
 
     // Repository

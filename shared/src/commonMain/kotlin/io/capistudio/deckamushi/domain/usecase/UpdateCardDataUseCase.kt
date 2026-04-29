@@ -3,7 +3,7 @@ package io.capistudio.deckamushi.domain.usecase
 import io.capistudio.deckamushi.data.local.VersionCache
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.mapper.CardDtoMapper.toDbModel
-import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
+import io.capistudio.deckamushi.data.remote.CardDataApi
 import io.capistudio.deckamushi.data.remote.RemoteResult
 
 /**
@@ -17,7 +17,7 @@ import io.capistudio.deckamushi.data.remote.RemoteResult
  * - no pre-sync delete/wipe step is performed
  */
 class UpdateCardDataUseCase(
-    private val api: DeckamushiDataApi,
+    private val api: CardDataApi,
     private val cache: VersionCache,
     private val dbProvider: AppDatabaseProvider,
 ) {

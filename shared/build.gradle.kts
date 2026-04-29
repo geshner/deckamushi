@@ -124,8 +124,16 @@ buildkonfig {
         if (file.exists()) load(file.inputStream())
     }
 
-    val owner = localProperties.getProperty("GITHUB_DATA_OWNER")
-    val repo = localProperties.getProperty("GITHUB_DATA_REPO")
+    val isDemo = project.findProperty("demoMode")?.toString()?.toBoolean() ?: false
+
+    val (owner, repo) = if (isDemo) {
+        Pair(
+            localProperties.getProperty("GITHUB_DATA_OWNER"),
+            localProperties.getProperty("GITHUB_DATA_REPO")
+        )
+    } else {
+        Pair("geshner", "deckamushi")
+    }
 
     val finalBaseUrl = "https://api.github.com/repos/$owner/$repo/contents"
 
@@ -133,11 +141,15 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(
             FieldSpec.Type.STRING,
-            "API_KEY", localProperties.getProperty("GITHUB_PAT")
+            "API_KEY", localProperties.getProperty("GITHUB_PAT") ?: ""
         )
         buildConfigField(
             FieldSpec.Type.STRING,
             "BASE_URL", finalBaseUrl
+        )
+        buildConfigField(
+            FieldSpec.Type.BOOLEAN,
+            "IS_DEMO", "$isDemo"
         )
     }
 }

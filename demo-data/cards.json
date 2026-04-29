@@ -1,0 +1,156 @@
+[
+  {
+    "variant_id": "DEMO-001-L", "id": "DEMO-001", "variant": null,
+    "name": "Captain Ironjaw", "color": "赤", "rarity": "L",
+    "card_type": "LEADER",
+    "power": 5000, "counter": null, "life": 5,
+    "attribute": "Strike", "feature": "Pirate / Captain",
+    "text": "【On Your Turn】 Once per turn, you may give this Leader +1000 power.",
+    "block_icon": null, "get_info": "Demo Pack Vol.1",
+    "image_url":
+    "https://placehold.co/400x560/c0392b/ffffff?text=LEADER"
+  },
+  {
+    "variant_id": "DEMO-002", "id": "DEMO-002", "variant": null,
+    "name": "Storm Raider", "color": "赤", "rarity": "R", "card_type":
+  "CHARACTER",
+    "power": 5000, "counter": 1000, "life": null,
+    "attribute": "Strike", "feature": "Pirate",
+    "text": "【On Play】 K.O. one of your opponent's characters with 3000 power or less.",
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url":
+    "https://placehold.co/400x560/c0392b/ffffff?text=STORM+RAIDER"
+  },
+  {
+    "variant_id": "DEMO-003", "id": "DEMO-003", "variant": null,
+    "name": "Powder Keg Finn", "color": "赤", "rarity": "C",
+    "card_type": "CHARACTER",
+    "power": 3000, "counter": 2000, "life": null,
+    "attribute": null, "feature": "Pirate",
+    "text": null,
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/c0392b/ffffff?text=FINN"
+  },
+  {
+    "variant_id": "DEMO-004", "id": "DEMO-004", "variant": null,
+    "name": "First Mate Sable", "color": "緑", "rarity": "UC",
+    "card_type": "CHARACTER",
+    "power": 4000, "counter": 1000, "life": null,
+    "attribute": "Slash", "feature": "Pirate / Navigator",
+    "text": "【Blocker】",
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/27ae60/ffffff?text=SABLE"
+  },
+  {
+    "variant_id": "DEMO-005", "id": "DEMO-005", "variant": null,
+    "name": "Cannonball Mako", "color": "青", "rarity": "C",
+    "card_type": "CHARACTER",
+    "power": 3000, "counter": 2000, "life": null,
+    "attribute": "Ranged", "feature": "Pirate / Gunner",
+    "text": null,
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/2980b9/ffffff?text=MAKO"
+  },
+  {
+    "variant_id": "DEMO-006", "id": "DEMO-006", "variant": null,
+    "name": "Tidebreaker Oryn", "color": "青", "rarity": "SR",
+    "card_type": "CHARACTER",
+    "power": 7000, "counter": null, "life": null,
+    "attribute": "Special", "feature": "Pirate / Helmsman",
+    "text": "【On Play】 Return up to 2 of your opponent's characters with 5000 power or less to their hand.",
+    "block_icon": null, "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/2980b9/ffffff?text=ORYN"
+  },
+  {
+    "variant_id": "DEMO-007", "id": "DEMO-007", "variant": null,
+    "name": "Sea Witch Mora", "color": "紫", "rarity": "SR",
+    "card_type": "CHARACTER",
+    "power": 6000, "counter": null, "life": null,
+    "attribute": "Magic", "feature": "Pirate / Mage",
+    "text": "【Activate: Main】 You may rest this character: add 1 to the cost of one of your opponent's active characters until end of turn.",
+    "block_icon": null, "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/8e44ad/ffffff?text=MORA"
+  },
+  {
+    "variant_id": "DEMO-008", "id": "DEMO-008", "variant": null,
+    "name": "Shadow Blade Ryuu", "color": "黒", "rarity": "R",
+    "card_type": "CHARACTER",
+    "power": 5000, "counter": null, "life": null,
+    "attribute": "Slash", "feature": "Pirate / Assassin",
+    "text": "【Rush】",
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/2c3e50/ffffff?text=RYUU"
+  },
+  {
+    "variant_id": "DEMO-009", "id": "DEMO-009", "variant": null,
+    "name": "Harbormaster Greaves", "color": "黒", "rarity": "C",
+    "card_type": "CHARACTER",
+    "power": 2000, "counter": 2000, "life": null,
+    "attribute": null, "feature": "Navy",
+    "text": null,
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url":
+    "https://placehold.co/400x560/2c3e50/ffffff?text=GREAVES"
+  },
+  {
+    "variant_id": "DEMO-010", "id": "DEMO-010", "variant": null,
+    "name": "Dawn Sword Fen", "color": "黄", "rarity": "UC",
+    "card_type": "CHARACTER",
+    "power": 4000, "counter": 1000, "life": null,
+    "attribute": "Slash", "feature": "Revolutionary",
+    "text": "【On Attack】 Draw 1 card.",
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/f39c12/ffffff?text=FEN"
+  },
+  {
+    "variant_id": "DEMO-011", "id": "DEMO-011", "variant": null,
+    "name": "Coral Queen Selene", "color": "緑/黄", "rarity": "R",
+    "card_type": "CHARACTER",
+    "power": 5000, "counter": 1000, "life": null,
+    "attribute": "Special", "feature": "Pirate / Royalty",
+    "text": "【Blocker】 【On Block】 Draw 1 card.",
+    "block_icon": "1", "get_info": "Demo Pack Vol.1",
+    "image_url":
+    "https://placehold.co/400x560/16a085/ffffff?text=SELENE"
+  },
+  {
+    "variant_id": "DEMO-012", "id": "DEMO-012", "variant": null,
+    "name": "Stormcaller Yuki", "color": "紫/青", "rarity": "SR",
+    "card_type": "CHARACTER",
+    "power": 6000, "counter": null, "life": null,
+    "attribute": "Magic", "feature": "Pirate / Mage",
+    "text": "【On Play】 Look at the top 3 cards of your deck. Place 1 in your hand and the rest at the bottom.",
+    "block_icon": null, "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/6c3483/ffffff?text=YUKI"
+  },
+  {
+    "variant_id": "DEMO-013", "id": "DEMO-013", "variant": null,
+    "name": "Cannonfire Barrage", "color": "赤", "rarity": "UC",
+    "card_type": "EVENT",
+    "power": null, "counter": 2000, "life": null,
+    "attribute": null, "feature": null,
+    "text": "【Main】 Deal 1 damage to your opponent's leader. 【Counter】 Up to 1 of your leader or characters gains +2000 power during this battle.",
+    "block_icon": null, "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/e74c3c/ffffff?text=EVENT"
+  },
+  {
+    "variant_id": "DEMO-014", "id": "DEMO-014", "variant": null,
+    "name": "Golden Compass", "color": "黄", "rarity": "UC",
+    "card_type": "EVENT",
+    "power": null, "counter": null, "life": null,
+    "attribute": null, "feature": null,
+    "text": "【Main】 Draw 2 cards, then place 1 card from your hand at the bottom of your deck.",
+    "block_icon": null, "get_info": "Demo Pack Vol.1",
+    "image_url": "https://placehold.co/400x560/f39c12/ffffff?text=EVENT"
+  },
+  {
+    "variant_id": "DEMO-015", "id": "DEMO-015", "variant": null,
+    "name": "Iron Fortress", "color": "青", "rarity": "R", "card_type":
+  "STAGE",
+    "power": null, "counter": null, "life": null,
+    "attribute": null, "feature": null,
+    "text": "【Activate: Main】 You may rest this stage: one of your characters gains 【Blocker】 until end of your opponent's next turn.",
+  "block_icon": null, "get_info": "Demo Pack Vol.1",
+  "image_url": "https://placehold.co/400x560/1a5276/ffffff?text=STAGE"
+  }
+]
