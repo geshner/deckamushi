@@ -58,7 +58,7 @@ Typed routes are defined in `Screen.kt` as serializable route models:
 - `Home`
 - `CardList`
 - `Collection`
-- `Sync`
+- `Settings`
 - `CardDetail(id, fromScan)`
 - `Scanner`
 - `ScanResults(baseId)`
@@ -99,7 +99,7 @@ In `KoinModules.kt`, shared bindings provide:
 - network API client (`DeckamushiDataApi`)
 - repository binding (`CardRepositoryImpl` -> `CardRepository`)
 - use cases (`GetCardByIdUseCase`, `UpdateCardDataUseCase`, etc.)
-- feature viewmodels (`CardListViewModel`, `SyncViewModel`, `CollectionViewModel`, `ScanViewModel`)
+- feature viewmodels (`CardListViewModel`, `SettingsViewModel`, `CollectionViewModel`, `ScanViewModel`)
 
 Parameterized viewmodels are used where route arguments are needed:
 
@@ -155,7 +155,7 @@ Sync pipeline today:
 - `DeckamushiDataApi` fetches `version.json` and `cards.json`
 - `UpdateCardDataUseCase` applies ETag/version checks
 - cards are written with SQL `INSERT OR REPLACE`
-- sync is triggered from the Sync screen via `SyncViewModel`
+- sync is triggered from the Settings screen via `SettingsViewModel`
 
 `DomainResult<T>` is used as the standard use case result wrapper in domain/presentation interactions.
 
@@ -169,6 +169,8 @@ Current explicit platform boundaries include:
 - camera preview component (`CameraPreview`)
 - image component (`RemoteImage`)
 - back-handler bridge (`PlatformBackHandler`)
+- share sheet for collection export (`rememberShareLauncher`)
+- file picker for collection import (`rememberFilePicker`)
 
 This keeps shared feature logic in `commonMain` while isolating hardware/runtime differences per platform.
 
@@ -178,7 +180,7 @@ Scanner is a good example of this split:
 
 - shared scanner state machine and matching rules in `ScanViewModel`
 - Android camera + OCR pipeline in `CameraPreview.android.kt`
-- iOS scanner route present but currently placeholder-only
+- iOS scanner implemented via AVFoundation + Vision framework, not yet tested on device
 
 Navigation behavior in scan flows is coordinated through:
 
@@ -190,7 +192,7 @@ Navigation behavior in scan flows is coordinated through:
 
 These are visible in current code and important for maintenance:
 
-- iOS scanner implementation is not feature-complete yet
+- iOS scanner is implemented (AVFoundation + Vision framework) but not yet tested on a real device
 - iOS `RemoteImage` is currently a placeholder (gray box)
 - iOS platform DI module is currently empty
 - `MainViewController.kt` currently calls `initKoin(cache, dbProvider, api)` while shared `initKoin` currently exposes a config-lambda signature; this path should be aligned when iOS implementation work resumes

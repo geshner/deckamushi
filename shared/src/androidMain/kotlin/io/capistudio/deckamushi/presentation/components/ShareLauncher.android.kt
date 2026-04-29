@@ -16,7 +16,9 @@ actual fun rememberShareLauncher(onComplete: () -> Unit): (String) -> Unit {
     ) { onComplete() }
 
     return { content ->
-        val file = File(context.cacheDir, "deckamushi_backup.json")
+        val isDebug = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        val fileName = if (isDebug) "deckamushi_backup_debug.json" else "deckamushi_backup.json"
+        val file = File(context.cacheDir, fileName)
         file.writeText(content)
 
         val uri = FileProvider.getUriForFile(

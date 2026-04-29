@@ -15,7 +15,7 @@ plugins {
 kotlin {
     // Required by the new AGP KMP Android library plugin
     android {
-        namespace = "io.capistudio.deckamushi"
+        namespace = "io.capistudio.deckamushi.shared"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         androidResources.enable = true
