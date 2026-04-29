@@ -8,7 +8,7 @@
     "text": "【On Your Turn】 Once per turn, you may give this Leader +1000 power.",
     "block_icon": null, "get_info": "Demo Pack Vol.1",
     "image_url":
-    "https://placehold.co/400x560/c0392b/ffffff?text=LEADER"
+    "https://placehold.co/400x560/c0392b/ffffff.png?text=LEADER"
   },
   {
     "variant_id": "DEMO-002", "id": "DEMO-002", "variant": null,
@@ -19,7 +19,7 @@
     "text": "【On Play】 K.O. one of your opponent's characters with 3000 power or less.",
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
     "image_url":
-    "https://placehold.co/400x560/c0392b/ffffff?text=STORM+RAIDER"
+    "https://placehold.co/400x560/c0392b/ffffff.png?text=STORM+RAIDER"
   },
   {
     "variant_id": "DEMO-003", "id": "DEMO-003", "variant": null,
@@ -29,7 +29,7 @@
     "attribute": null, "feature": "Pirate",
     "text": null,
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/c0392b/ffffff?text=FINN"
+    "image_url": "https://placehold.co/400x560/c0392b/ffffff.png?text=FINN"
   },
   {
     "variant_id": "DEMO-004", "id": "DEMO-004", "variant": null,
@@ -39,7 +39,7 @@
     "attribute": "Slash", "feature": "Pirate / Navigator",
     "text": "【Blocker】",
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/27ae60/ffffff?text=SABLE"
+    "image_url": "https://placehold.co/400x560/27ae60/ffffff.png?text=SABLE"
   },
   {
     "variant_id": "DEMO-005", "id": "DEMO-005", "variant": null,
@@ -49,7 +49,7 @@
     "attribute": "Ranged", "feature": "Pirate / Gunner",
     "text": null,
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/2980b9/ffffff?text=MAKO"
+    "image_url": "https://placehold.co/400x560/2980b9/ffffff.png?text=MAKO"
   },
   {
     "variant_id": "DEMO-006", "id": "DEMO-006", "variant": null,
@@ -59,7 +59,7 @@
     "attribute": "Special", "feature": "Pirate / Helmsman",
     "text": "【On Play】 Return up to 2 of your opponent's characters with 5000 power or less to their hand.",
     "block_icon": null, "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/2980b9/ffffff?text=ORYN"
+    "image_url": "https://placehold.co/400x560/2980b9/ffffff.png?text=ORYN"
   },
   {
     "variant_id": "DEMO-007", "id": "DEMO-007", "variant": null,
@@ -69,7 +69,7 @@
     "attribute": "Magic", "feature": "Pirate / Mage",
     "text": "【Activate: Main】 You may rest this character: add 1 to the cost of one of your opponent's active characters until end of turn.",
     "block_icon": null, "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/8e44ad/ffffff?text=MORA"
+    "image_url": "https://placehold.co/400x560/8e44ad/ffffff.png?text=MORA"
   },
   {
     "variant_id": "DEMO-008", "id": "DEMO-008", "variant": null,
@@ -79,7 +79,7 @@
     "attribute": "Slash", "feature": "Pirate / Assassin",
     "text": "【Rush】",
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/2c3e50/ffffff?text=RYUU"
+    "image_url": "https://placehold.co/400x560/2c3e50/ffffff.png?text=RYUU"
   },
   {
     "variant_id": "DEMO-009", "id": "DEMO-009", "variant": null,
@@ -90,7 +90,7 @@
     "text": null,
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
     "image_url":
-    "https://placehold.co/400x560/2c3e50/ffffff?text=GREAVES"
+    "https://placehold.co/400x560/2c3e50/ffffff.png?text=GREAVES"
   },
   {
     "variant_id": "DEMO-010", "id": "DEMO-010", "variant": null,
@@ -100,7 +100,7 @@
     "attribute": "Slash", "feature": "Revolutionary",
     "text": "【On Attack】 Draw 1 card.",
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/f39c12/ffffff?text=FEN"
+    "image_url": "https://placehold.co/400x560/f39c12/ffffff.png?text=FEN"
   },
   {
     "variant_id": "DEMO-011", "id": "DEMO-011", "variant": null,
@@ -111,7 +111,7 @@
     "text": "【Blocker】 【On Block】 Draw 1 card.",
     "block_icon": "1", "get_info": "Demo Pack Vol.1",
     "image_url":
-    "https://placehold.co/400x560/16a085/ffffff?text=SELENE"
+    "https://placehold.co/400x560/16a085/ffffff.png?text=SELENE"
   },
   {
     "variant_id": "DEMO-012", "id": "DEMO-012", "variant": null,
@@ -121,7 +121,7 @@
     "attribute": "Magic", "feature": "Pirate / Mage",
     "text": "【On Play】 Look at the top 3 cards of your deck. Place 1 in your hand and the rest at the bottom.",
     "block_icon": null, "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/6c3483/ffffff?text=YUKI"
+    "image_url": "https://placehold.co/400x560/6c3483/ffffff.png?text=YUKI"
   },
   {
     "variant_id": "DEMO-013", "id": "DEMO-013", "variant": null,
@@ -131,7 +131,7 @@
     "attribute": null, "feature": null,
     "text": "【Main】 Deal 1 damage to your opponent's leader. 【Counter】 Up to 1 of your leader or characters gains +2000 power during this battle.",
     "block_icon": null, "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/e74c3c/ffffff?text=EVENT"
+    "image_url": "https://placehold.co/400x560/e74c3c/ffffff.png?text=EVENT"
   },
   {
     "variant_id": "DEMO-014", "id": "DEMO-014", "variant": null,
@@ -141,7 +141,7 @@
     "attribute": null, "feature": null,
     "text": "【Main】 Draw 2 cards, then place 1 card from your hand at the bottom of your deck.",
     "block_icon": null, "get_info": "Demo Pack Vol.1",
-    "image_url": "https://placehold.co/400x560/f39c12/ffffff?text=EVENT"
+    "image_url": "https://placehold.co/400x560/f39c12/ffffff.png?text=EVENT"
   },
   {
     "variant_id": "DEMO-015", "id": "DEMO-015", "variant": null,
@@ -151,6 +151,6 @@
     "attribute": null, "feature": null,
     "text": "【Activate: Main】 You may rest this stage: one of your characters gains 【Blocker】 until end of your opponent's next turn.",
   "block_icon": null, "get_info": "Demo Pack Vol.1",
-  "image_url": "https://placehold.co/400x560/1a5276/ffffff?text=STAGE"
+  "image_url": "https://placehold.co/400x560/1a5276/ffffff.png?text=STAGE"
   }
 ]

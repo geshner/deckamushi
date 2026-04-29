@@ -119,38 +119,31 @@ sqldelight {
 }
 
 buildkonfig {
-    val localProperties = Properties().apply {
-        val file = rootProject.file("local.properties")
-        if (file.exists()) load(file.inputStream())
+    val props = Properties().apply {
+        rootProject.file("local.properties")
+            .takeIf { it.exists() }
+            ?.let { load(it.inputStream()) }
     }
 
-    val isDemo = project.findProperty("demoMode")?.toString()?.toBoolean() ?: false
+    val isDemo = props.getProperty("IS_DEMO")?.toBoolean() ?: false
+    val apiKey: String
+    val baseUrl: String
 
-    val (owner, repo) = if (isDemo) {
-        Pair(
-            localProperties.getProperty("GITHUB_DATA_OWNER"),
-            localProperties.getProperty("GITHUB_DATA_REPO")
-        )
+    if (isDemo) {
+        apiKey = ""
+        baseUrl = "https://api.github.com/repos/geshner/deckamushi/contents/demo-data"
     } else {
-        Pair("geshner", "deckamushi")
+        apiKey = props.getProperty("GITHUB_PAT") ?: ""
+        val owner = props.getProperty("GITHUB_DATA_OWNER") ?: ""
+        val repo = props.getProperty("GITHUB_DATA_REPO") ?: ""
+        baseUrl = "https://api.github.com/repos/$owner/$repo/contents"
     }
-
-    val finalBaseUrl = "https://api.github.com/repos/$owner/$repo/contents"
 
     packageName = "io.capistudio.deckamushi"
     defaultConfigs {
-        buildConfigField(
-            FieldSpec.Type.STRING,
-            "API_KEY", localProperties.getProperty("GITHUB_PAT") ?: ""
-        )
-        buildConfigField(
-            FieldSpec.Type.STRING,
-            "BASE_URL", finalBaseUrl
-        )
-        buildConfigField(
-            FieldSpec.Type.BOOLEAN,
-            "IS_DEMO", "$isDemo"
-        )
+        buildConfigField(FieldSpec.Type.BOOLEAN, "IS_DEMO", "$isDemo")
+        buildConfigField(FieldSpec.Type.STRING, "API_KEY", apiKey)
+        buildConfigField(FieldSpec.Type.STRING, "BASE_URL", baseUrl)
     }
 }
 
