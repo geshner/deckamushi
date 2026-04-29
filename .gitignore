@@ -21,6 +21,7 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
+card_placeholder.xml
 
 # -----------------------------------------------
 # Kotlin / IDE
