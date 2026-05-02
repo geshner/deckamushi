@@ -38,6 +38,7 @@ paging = "3.5.0-beta01"
 mlkit = "16.0.1"
 accompanist = "0.37.3"
 compose-fonts = "1.10.0"
+googleServises = "4.4.4"
 
 [libraries]
 # Kotlin / Coroutines / Serialization
@@ -129,3 +130,4 @@ kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-compiler-plugin" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleServises" }

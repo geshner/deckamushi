@@ -22,6 +22,7 @@ captures/
 .externalNativeBuild/
 .cxx/
 card_placeholder.xml
+google-services.json
 
 # -----------------------------------------------
 # Kotlin / IDE
