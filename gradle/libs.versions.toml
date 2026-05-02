@@ -130,4 +130,3 @@ kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-compiler-plugin" }
-googleServices = { id = "com.google.gms.google-services", version.ref = "googleServises" }
