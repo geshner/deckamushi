@@ -28,7 +28,6 @@ fun CardGridItem(
             url = imageUrl,
             contentDescription = contentDescription,
             modifier = Modifier.fillMaxWidth()
-                .height(179.dp)
                 .aspectRatio(CARD_ASPECT_RATIO)
                 .clip(MaterialTheme.shapes.medium)
                 .padding(paddingSmall)
