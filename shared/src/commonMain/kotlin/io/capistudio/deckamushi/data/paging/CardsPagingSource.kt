@@ -18,7 +18,7 @@ class CardsPagingSource(
             val cards = if (query.isNullOrBlank()) {
                 repository.getCardsPage(limit, offset)
             } else {
-                repository.searchCardsByName(query, limit, offset)
+                repository.searchCardsByBaseId(query, limit, offset)
             }
 
             LoadResult.Page(

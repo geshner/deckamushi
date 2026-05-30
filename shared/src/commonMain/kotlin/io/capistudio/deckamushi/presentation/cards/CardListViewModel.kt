@@ -3,11 +3,9 @@ package io.capistudio.deckamushi.presentation.cards
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import co.touchlab.kermit.Logger
-import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
-import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
+import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByBaseIdCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
 import io.capistudio.deckamushi.domain.util.onSuccess
 import io.capistudio.deckamushi.presentation.cards.CardsListContract.Action
@@ -26,11 +24,10 @@ import kotlinx.coroutines.launch
 class CardListViewModel(
     private val getCardsPageUseCase: GetCardsPageUseCase,
     private val getCardsCountUseCase: GetCardsCountUseCase,
-    private val getCardsFoundByNameCountUseCase: GetCardsFoundByNameCountUseCase,
+    private val getCardsFoundByBaseIdCountUseCase: GetCardsFoundByBaseIdCountUseCase,
 ) : Mvi<State, Action, Effect>(
     initialState = State(),
 ) {
-    private val log = Logger.withTag("CardsBrowserVM")
     private val _query = MutableStateFlow("")
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -69,7 +66,7 @@ class CardListViewModel(
                 getCardsCountUseCase()
                     .onSuccess { count = it }
             } else {
-                getCardsFoundByNameCountUseCase(query)
+                getCardsFoundByBaseIdCountUseCase(query)
                     .onSuccess { count = it }
             }
 

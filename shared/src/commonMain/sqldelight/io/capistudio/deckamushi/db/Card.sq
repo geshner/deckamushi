@@ -64,6 +64,18 @@ SELECT COUNT(*)
 FROM cards
 WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%';
 
+searchCardsByBaseId:
+SELECT id, name, image_url, variant
+FROM cards
+WHERE LOWER(base_id) LIKE '%' || LOWER(:query) || '%'
+ORDER BY base_id, variant
+LIMIT :limit OFFSET :offset;
+
+searchCardsByBaseIdCount:
+SELECT COUNT(*)
+FROM cards
+WHERE LOWER(base_id) LIKE '%' || LOWER(:query) || '%';
+
 getOwnedCards:
 SELECT
     c.id, c.name, c.image_url, c.variant,

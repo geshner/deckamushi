@@ -1,6 +1,8 @@
 package io.capistudio.deckamushi.presentation.scan
 
+import android.hardware.camera2.CaptureRequest
 import androidx.annotation.OptIn
+import androidx.camera.camera2.interop.Camera2Interop
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -48,9 +50,16 @@ actual fun CameraPreview(
             val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
             cameraProviderFuture.addListener({
                 val cameraProvider = cameraProviderFuture.get()
-                val preview = Preview.Builder().build().also {
-                    it.surfaceProvider = view.surfaceProvider
-                }
+                val preview = Preview.Builder()
+                    .also { builder ->
+                        Camera2Interop.Extender(builder)
+                            .setCaptureRequestOption(
+                                CaptureRequest.CONTROL_AF_MODE,
+                                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
+                            )
+                    }
+                    .build()
+                    .also { it.surfaceProvider = view.surfaceProvider }
 
                 // Preview + analysis must be bound together so the camera preview and OCR pipeline
                 // share the same lifecycle and do not unbind each other.

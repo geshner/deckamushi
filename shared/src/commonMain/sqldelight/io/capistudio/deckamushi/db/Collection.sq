@@ -18,6 +18,10 @@ WHERE card_id = ?),
 ) AS quantity;
 
 getOwnedTotal:
+SELECT COALESCE(SUM(quantity), 0)
+FROM collection;
+
+getOwnedCount:
 SELECT COUNT(*)
 FROM collection;
 
