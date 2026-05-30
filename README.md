@@ -141,3 +141,7 @@ Deckamushi currently has a working MVP around these core loops:
 4. Scan cards on Android and resolve variants
 
 The main development focus is currently Android-first, while keeping the shared architecture ready for iOS expansion.
+
+---
+
+[Privacy Policy](privacy-policy.html)
