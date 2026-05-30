@@ -23,6 +23,7 @@ captures/
 .cxx/
 card_placeholder.xml
 google-services.json
+androidApp/release
 
 # -----------------------------------------------
 # Kotlin / IDE
