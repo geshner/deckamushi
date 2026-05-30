@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Privacy Policy – Deckamushi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+          --bg: #0e0f13;
+          --surface: #16181f;
+          --border: #2a2d38;
+          --accent: #5b8cff;
+          --accent-soft: rgba(91,140,255,0.12);
+          --text: #e8eaf0;
+          --muted: #7a7f96;
+          --card-bg: #1b1e27;
+        }
+
+        body {
+          background: var(--bg);
+          color: var(--text);
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 300;
+          line-height: 1.75;
+          min-height: 100vh;
+          padding: 0 1.5rem 4rem;
+        }
+
+        /* subtle grid texture */
+        body::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          background-image:
+            linear-gradient(var(--border) 1px, transparent 1px),
+            linear-gradient(90deg, var(--border) 1px, transparent 1px);
+          background-size: 40px 40px;
+          opacity: 0.18;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .wrapper {
+          position: relative;
+          z-index: 1;
+          max-width: 720px;
+          margin: 0 auto;
+        }
+
+        header {
+          padding: 4rem 0 2.5rem;
+          border-bottom: 1px solid var(--border);
+          margin-bottom: 3rem;
+        }
+
+        .app-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: var(--accent-soft);
+          border: 1px solid rgba(91,140,255,0.3);
+          border-radius: 999px;
+          padding: 0.3rem 0.9rem;
+          font-size: 0.75rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--accent);
+          margin-bottom: 1.5rem;
+        }
+
+        .app-badge::before {
+          content: '';
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: var(--accent);
+          display: inline-block;
+        }
+
+        h1 {
+          font-family: 'Syne', sans-serif;
+          font-weight: 800;
+          font-size: clamp(2rem, 5vw, 3rem);
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+          color: #fff;
+          margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+          color: var(--muted);
+          font-size: 0.9rem;
+        }
+
+        .subtitle strong {
+          color: var(--text);
+          font-weight: 400;
+        }
+
+        section {
+          margin-bottom: 2rem;
+        }
+
+        .card {
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 1.75rem 2rem;
+          transition: border-color 0.2s;
+        }
+
+        .card:hover {
+          border-color: rgba(91,140,255,0.35);
+        }
+
+        h2 {
+          font-family: 'Syne', sans-serif;
+          font-weight: 600;
+          font-size: 1rem;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: var(--accent);
+          margin-bottom: 0.75rem;
+        }
+
+        p {
+          color: var(--text);
+          font-size: 0.95rem;
+          opacity: 0.85;
+        }
+
+        .highlight-box {
+          background: var(--accent-soft);
+          border: 1px solid rgba(91,140,255,0.25);
+          border-radius: 10px;
+          padding: 1.25rem 1.5rem;
+          margin-bottom: 2rem;
+          display: flex;
+          gap: 0.75rem;
+          align-items: flex-start;
+        }
+
+        .highlight-box .icon {
+          font-size: 1.1rem;
+          margin-top: 0.1rem;
+          flex-shrink: 0;
+        }
+
+        .highlight-box p {
+          font-size: 0.9rem;
+          color: #c4cdff;
+          opacity: 1;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin-top: 0.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        li {
+          display: flex;
+          align-items: baseline;
+          gap: 0.6rem;
+          font-size: 0.95rem;
+          opacity: 0.85;
+        }
+
+        li::before {
+          content: '—';
+          color: var(--accent);
+          font-weight: 600;
+          flex-shrink: 0;
+        }
+
+        a {
+          color: var(--accent);
+          text-decoration: none;
+          border-bottom: 1px solid rgba(91,140,255,0.3);
+          transition: border-color 0.2s;
+        }
+        a:hover { border-color: var(--accent); }
+
+        footer {
+          margin-top: 3rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid var(--border);
+          font-size: 0.8rem;
+          color: var(--muted);
+          text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <div class="app-badge">Android App</div>
+        <h1>Privacy Policy</h1>
+        <p class="subtitle">
+            <strong>Deckamushi</strong> &nbsp;·&nbsp; Last updated: <strong>May 2025</strong>
+        </p>
+    </header>
+
+    <div class="highlight-box">
+        <span class="icon">🔒</span>
+        <p>Deckamushi does not collect, store, or share any personal data. Your information never leaves your device.</p>
+    </div>
+
+    <section>
+        <div class="card">
+            <h2>What data we collect</h2>
+            <p>We do not collect any personal information. Deckamushi does not require an account, login, or any form of user registration.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="card">
+            <h2>How the app works</h2>
+            <ul>
+                <li>The app downloads a card list from a remote repository solely to display card information within the app.</li>
+                <li>Your owned cards are stored in a local database on your device only.</li>
+                <li>You can export your card collection as a JSON file to your device storage at any time.</li>
+                <li>No data is ever transmitted to any external server, third party, or cloud service.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <div class="card">
+            <h2>Third-party services</h2>
+            <p>Deckamushi does not integrate any third-party analytics, advertising, crash reporting, or tracking services.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="card">
+            <h2>Data storage & security</h2>
+            <p>All data generated by the app (your card collection) is stored locally on your device using Android's internal storage. Uninstalling the app will remove all locally stored data.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="card">
+            <h2>Children's privacy</h2>
+            <p>Deckamushi does not knowingly collect any data from anyone, including children under the age of 13. Since no data is collected at all, the app is safe for all ages.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="card">
+            <h2>Changes to this policy</h2>
+            <p>If we ever change how the app handles data, this page will be updated accordingly. We encourage you to review this page periodically.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="card">
+            <h2>Contact</h2>
+            <p>If you have any questions about this privacy policy, you can reach us through the app's GitHub repository page.</p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2025 Deckamushi. All rights reserved.
+    </footer>
+</div>
+</body>
+</html>
