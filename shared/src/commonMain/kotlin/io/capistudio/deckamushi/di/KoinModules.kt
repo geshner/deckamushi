@@ -10,6 +10,7 @@ import io.capistudio.deckamushi.domain.usecase.ExportCollectionUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsByBaseIdUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
+import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByBaseIdCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedCardsUseCase
@@ -53,6 +54,7 @@ private val sharedModule = module {
     factoryOf(::GetCardByIdUseCase)
     factoryOf(::GetCardsCountUseCase)
     factoryOf(::GetCardsFoundByNameCountUseCase)
+    factoryOf(::GetCardsFoundByBaseIdCountUseCase)
     factoryOf(::GetCardsPageUseCase)
     factoryOf(::GetOwnedQuantityUseCase)
     factoryOf(::IncrementOwnedUseCase)

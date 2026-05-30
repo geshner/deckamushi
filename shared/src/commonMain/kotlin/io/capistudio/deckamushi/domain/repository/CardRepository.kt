@@ -23,6 +23,8 @@ interface CardRepository {
     suspend fun getCardsPage(limit: Int, offset: Int): List<CardSummary>
     suspend fun searchCardsCount(query: String): Long
     suspend fun searchCardsByName(query: String, limit: Int, offset: Int): List<CardSummary>
+    suspend fun searchCardsByBaseIdCount(query: String): Long
+    suspend fun searchCardsByBaseId(query: String, limit: Int, offset: Int): List<CardSummary>
     suspend fun getOwnedQuantity(cardId: String): Long
     suspend fun incrementOwned(cardId: String)
     suspend fun decrementOwned(cardId: String)
@@ -88,6 +90,28 @@ class CardRepositoryImpl(
             }
     }
 
+    override suspend fun searchCardsByBaseIdCount(query: String): Long {
+        return db.cardQueries.searchCardsByBaseIdCount(query).executeAsOne()
+    }
+
+    override suspend fun searchCardsByBaseId(
+        query: String,
+        limit: Int,
+        offset: Int
+    ): List<CardSummary> {
+        return db.cardQueries
+            .searchCardsByBaseId(query, limit.toLong(), offset.toLong())
+            .executeAsList()
+            .map { r ->
+                CardSummary(
+                    id = r.id,
+                    variant = r.variant,
+                    name = r.name,
+                    imageUrl = r.image_url.orEmpty(),
+                )
+            }
+    }
+
     override suspend fun getOwnedQuantity(cardId: String): Long {
         return db.collectionQueries
             .getQuantityByCardId(cardId)
@@ -127,7 +151,7 @@ class CardRepositoryImpl(
         // Paging is backed directly by SQLDelight queries so collection screens can load lazily
         // without materializing the full owned-card list in memory.
         return QueryPagingSource(
-            countQuery = db.collectionQueries.getOwnedTotal(),
+            countQuery = db.collectionQueries.getOwnedCount(),
             transacter = db.collectionQueries,
             context = Dispatchers.IO,
             queryProvider = { limit, offset ->

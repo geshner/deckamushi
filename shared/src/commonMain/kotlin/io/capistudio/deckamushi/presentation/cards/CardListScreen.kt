@@ -61,7 +61,7 @@ fun CardListScreen(
         OutlinedTextField(
             value = state.queryDraft,
             onValueChange = { onAction(Action.QueryChanged(it)) },
-            label = { Text("Search by name") },
+            label = { Text("Search by ID") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(

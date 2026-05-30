@@ -60,6 +60,12 @@ fun CollectionScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        Text(
+            text = "${state.totalCount} cards owned",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = paddingLarge, vertical = 8.dp)
+        )
+
         //            OutlinedTextField(
         //                value = state.queryDraft,
         //                onValueChange = { onAction(Action.QueryChanged(it)) },
