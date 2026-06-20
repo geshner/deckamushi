@@ -1,7 +1,6 @@
 package io.capistudio.deckamushi.presentation.cart
 
 import io.capistudio.deckamushi.domain.model.CartItemSummary
-import org.koin.viewmodel.emptyState
 
 object CartContract {
 

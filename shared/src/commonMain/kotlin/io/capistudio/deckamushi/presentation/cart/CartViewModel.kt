@@ -20,7 +20,7 @@ class CartViewModel(
     private val removeFromCart: RemoveFromCartUseCase,
     private val clearCart: ClearCartUseCase,
     private val completePurchase: CompletePurchaseUseCase,
-) : Mvi<CartContract.State, CartContract.Action, CartContract.Effect>(
+) : Mvi<CartContract.State, CartContract.Action, Effect>(
     initialState = CartContract.State()
 ) {
     override suspend fun handleAction(action: CartContract.Action) {

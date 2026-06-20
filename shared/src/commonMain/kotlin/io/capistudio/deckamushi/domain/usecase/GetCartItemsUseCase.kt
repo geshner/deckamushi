@@ -8,7 +8,7 @@ class GetCartItemsUseCase(
     private val repository: CardRepository,
 ) {
 
-    suspend operator fun invoke(): Flow<List<CartItemSummary>> {
+    operator fun invoke(): Flow<List<CartItemSummary>> {
         return repository.getCartItems()
     }
 }

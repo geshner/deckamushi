@@ -2,6 +2,10 @@ package io.capistudio.deckamushi
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -11,19 +15,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import deckamushi.shared.generated.resources.Res
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.navigation.NavController
-import androidx.navigation.navigation
 import deckamushi.shared.generated.resources.app_name
 import deckamushi.shared.generated.resources.title_card_detail
 import deckamushi.shared.generated.resources.title_card_list
@@ -32,7 +32,6 @@ import deckamushi.shared.generated.resources.title_my_collection
 import deckamushi.shared.generated.resources.title_scan
 import deckamushi.shared.generated.resources.title_scan_result
 import deckamushi.shared.generated.resources.title_settings
-import io.capistudio.deckamushi.domain.usecase.AddToCartUseCase
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
 import io.capistudio.deckamushi.presentation.cart.CartContract
 import io.capistudio.deckamushi.presentation.cart.CartRoute
