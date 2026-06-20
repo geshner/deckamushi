@@ -1,15 +1,20 @@
 package io.capistudio.deckamushi.domain.repository
 
 import androidx.paging.PagingSource
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import io.capistudio.deckamushi.data.local.db.AppDatabaseProvider
 import io.capistudio.deckamushi.data.mapper.CardMapper.toCard
 import io.capistudio.deckamushi.domain.model.Card
 import io.capistudio.deckamushi.domain.model.CardSummary
+import io.capistudio.deckamushi.domain.model.CartItemSummary
 import io.capistudio.deckamushi.domain.model.OwnedCardExport
 import io.capistudio.deckamushi.domain.usecase.ImportMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Local data boundary for card catalog reads and owned-collection mutations.
@@ -35,6 +40,13 @@ interface CardRepository {
     suspend fun getAllOwned(): List<Pair<String, Long>>
     suspend fun cardExists(cardId: String): Boolean
     suspend fun importOwned(entries: List<OwnedCardExport>, mode: ImportMode)
+    fun getCartItems(): Flow<List<CartItemSummary>>
+    suspend fun getCartTotalCount(): Long
+    suspend fun addToCart(cardId: String)
+    suspend fun setCartQuantity(cardId: String, quantity: Long)
+    suspend fun removeFromCart(cardId: String)
+    suspend fun clearCart()
+    suspend fun completePurchase()
 }
 
 /** SQLDelight-backed implementation of [CardRepository]. */
@@ -217,5 +229,50 @@ class CardRepositoryImpl(
 
     private fun mergeOwned(cardId: String, quantity: Long) {
         db.collectionQueries.mergeOwned(cardId, quantity)
+    }
+
+    override fun getCartItems(): Flow<List<CartItemSummary>> {
+        return db.cartQueries.getCartContent()
+            .asFlow()
+            .mapToList(Dispatchers.IO)
+            .map { list ->
+                list.map {
+                    CartItemSummary(
+                        it.id,
+                        it.variant,
+                        it.name,
+                        it.image_url,
+                        it.cart_quantity,
+                        it.owned_quantity
+                    )
+                }
+            }
+    }
+
+    override suspend fun getCartTotalCount(): Long {
+        return db.cartQueries.getCartTotalCount().executeAsOneOrNull() ?: 0L
+    }
+
+    override suspend fun addToCart(cardId: String) {
+        db.cartQueries.addToCart(cardId)
+    }
+
+    override suspend fun setCartQuantity(cardId: String, quantity: Long) {
+        db.cartQueries.setCartQuantity(quantity, cardId)
+    }
+
+    override suspend fun removeFromCart(cardId: String) {
+        db.cartQueries.removeFromCart(cardId)
+    }
+
+    override suspend fun clearCart() {
+        db.cartQueries.clearCart()
+    }
+
+    override suspend fun completePurchase() {
+        db.transaction {
+            db.collectionQueries.migrateFromCart()
+            db.cartQueries.clearCart()
+        }
     }
 }

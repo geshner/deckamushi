@@ -9,6 +9,7 @@
     <string name="title_card_detail">Card Detail</string>
     <string name="title_scan_result">Pick your card</string>
     <string name="title_scan">Scan Card</string>
+    <string name="title_cart">Cart</string>
 
     <!-- Actions/Buttons -->
     <string name="action_search_hint">Search by name</string>

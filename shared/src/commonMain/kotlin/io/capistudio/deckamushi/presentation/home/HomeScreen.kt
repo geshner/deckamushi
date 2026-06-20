@@ -13,6 +13,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Shop
+import androidx.compose.material.icons.filled.Shop2
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -29,6 +35,7 @@ fun HomeScreen(
     onOpenCards: () -> Unit,
     onOpenCollection: () -> Unit,
     onOpenScanner: () -> Unit,
+    onOpenStoreMode:()->Unit,
 ) {
     Column(
         modifier = Modifier
@@ -67,6 +74,15 @@ fun HomeScreen(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = onOpenScanner,
+                modifier = Modifier.fillMaxWidth().aspectRatio(3f)
+            )
+            HomeNavCard(
+                icon = Icons.Default.ShoppingCart,
+                title = "In Store",
+                subtitle = "Track your shopping cart",
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                onClick = onOpenStoreMode,
                 modifier = Modifier.fillMaxWidth().aspectRatio(3f)
             )
         }
@@ -112,4 +128,15 @@ private fun HomeNavCard(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        onOpenCards = {},
+        onOpenCollection = {},
+        onOpenScanner = {},
+        onOpenStoreMode = {}
+    )
 }

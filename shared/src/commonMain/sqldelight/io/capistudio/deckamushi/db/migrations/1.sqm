@@ -1,0 +1,5 @@
+CREATE TABLE cart (
+    card_id TEXT PRIMARY KEY,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
+);

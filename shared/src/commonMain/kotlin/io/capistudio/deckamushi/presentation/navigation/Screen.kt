@@ -31,4 +31,16 @@ sealed interface Screen {
         /** Base id used to load all print variants that matched a scan. */
         val baseId: String
     ) : Screen
+
+    @Serializable
+    data object StoreModeGraph : Screen
+    @Serializable
+    data object StoreMode : Screen
+
+    @Serializable
+    data object CartScanner : Screen
+    @Serializable
+    data class CartScannerResults(
+        val baseId: String
+    ) : Screen
 }

@@ -5,6 +5,9 @@ import io.capistudio.deckamushi.data.remote.CardDataApi
 import io.capistudio.deckamushi.data.remote.DeckamushiDataApi
 import io.capistudio.deckamushi.domain.repository.CardRepository
 import io.capistudio.deckamushi.domain.repository.CardRepositoryImpl
+import io.capistudio.deckamushi.domain.usecase.AddToCartUseCase
+import io.capistudio.deckamushi.domain.usecase.ClearCartUseCase
+import io.capistudio.deckamushi.domain.usecase.CompletePurchaseUseCase
 import io.capistudio.deckamushi.domain.usecase.DecrementOwnedUseCase
 import io.capistudio.deckamushi.domain.usecase.ExportCollectionUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardByIdUseCase
@@ -13,13 +16,18 @@ import io.capistudio.deckamushi.domain.usecase.GetCardsCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByBaseIdCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsFoundByNameCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetCardsPageUseCase
+import io.capistudio.deckamushi.domain.usecase.GetCartItemsUseCase
+import io.capistudio.deckamushi.domain.usecase.GetCartTotalCountUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedCardsUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedQuantityUseCase
 import io.capistudio.deckamushi.domain.usecase.GetOwnedTotalUseCase
 import io.capistudio.deckamushi.domain.usecase.ImportCollectionUseCase
 import io.capistudio.deckamushi.domain.usecase.IncrementOwnedUseCase
+import io.capistudio.deckamushi.domain.usecase.RemoveFromCartUseCase
+import io.capistudio.deckamushi.domain.usecase.SetCartQuantityUseCase
 import io.capistudio.deckamushi.domain.usecase.UpdateCardDataUseCase
 import io.capistudio.deckamushi.presentation.cards.CardListViewModel
+import io.capistudio.deckamushi.presentation.cart.CartViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionViewModel
 import io.capistudio.deckamushi.presentation.detail.CardDetailViewModel
 import io.capistudio.deckamushi.presentation.scan.ScanResultsViewModel
@@ -65,12 +73,20 @@ private val sharedModule = module {
     factoryOf(::GetCardsByBaseIdUseCase)
     factoryOf(::ExportCollectionUseCase)
     factoryOf(::ImportCollectionUseCase)
+    factoryOf(::GetCartItemsUseCase)
+    factoryOf(::GetCartTotalCountUseCase)
+    factoryOf(::AddToCartUseCase)
+    factoryOf(::SetCartQuantityUseCase)
+    factoryOf(::RemoveFromCartUseCase)
+    factoryOf(::ClearCartUseCase)
+    factoryOf(::CompletePurchaseUseCase)
 
     // ViewModels
     viewModelOf(::CardListViewModel)
     viewModelOf(::CollectionViewModel)
     viewModelOf(::ScanViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::CartViewModel)
 
     // Detail depends on route arguments, so Koin parameters are used instead of a no-arg binding.
     viewModel { (cardId: String, fromScan: Boolean) ->

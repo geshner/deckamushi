@@ -1,0 +1,35 @@
+CREATE TABLE cart (
+    card_id TEXT PRIMARY KEY,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
+);
+
+getCartContent:
+SELECT
+    c.id,
+    c.base_id,
+    c.variant,
+    c.name,
+    c.image_url,
+    cart.quantity AS cart_quantity,
+    COALESCE(col.quantity, 0) AS owned_quantity
+FROM cards c
+INNER JOIN cart ON c.id = cart.card_id
+LEFT JOIN collection col ON c.id = col.card_id
+ORDER BY c.id ASC;
+
+getCartTotalCount:
+SELECT COALESCE(SUM(quantity), 0) FROM cart;
+
+addToCart:
+INSERT OR REPLACE INTO cart(card_id, quantity)
+VALUES (:cardId, COALESCE((SELECT quantity FROM cart WHERE card_id = :cardId), 0) + 1);
+
+setCartQuantity:
+UPDATE cart SET quantity = :quantity WHERE card_id = :cardId;
+
+removeFromCart:
+DELETE FROM cart WHERE card_id = :cardId;
+
+clearCart:
+DELETE FROM cart;

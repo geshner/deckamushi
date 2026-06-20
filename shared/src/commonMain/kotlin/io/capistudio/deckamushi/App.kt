@@ -22,14 +22,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.navigation.NavController
+import androidx.navigation.navigation
 import deckamushi.shared.generated.resources.app_name
 import deckamushi.shared.generated.resources.title_card_detail
 import deckamushi.shared.generated.resources.title_card_list
+import deckamushi.shared.generated.resources.title_cart
 import deckamushi.shared.generated.resources.title_my_collection
 import deckamushi.shared.generated.resources.title_scan
 import deckamushi.shared.generated.resources.title_scan_result
 import deckamushi.shared.generated.resources.title_settings
+import io.capistudio.deckamushi.domain.usecase.AddToCartUseCase
 import io.capistudio.deckamushi.presentation.cards.CardListRoute
+import io.capistudio.deckamushi.presentation.cart.CartContract
+import io.capistudio.deckamushi.presentation.cart.CartRoute
+import io.capistudio.deckamushi.presentation.cart.CartViewModel
 import io.capistudio.deckamushi.presentation.collection.CollectionRoute
 import io.capistudio.deckamushi.presentation.components.DeckamushiTopAppBar
 import io.capistudio.deckamushi.presentation.detail.CardDetailRoute
@@ -41,6 +48,7 @@ import io.capistudio.deckamushi.presentation.settings.SettingsRoute
 import io.capistudio.deckamushi.presentation.theme.GrandLineTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 
 /**
@@ -66,6 +74,7 @@ fun App() {
         currentDestination?.hasRoute<Screen.CardDetail>() == true -> stringResource(Res.string.title_card_detail)
         currentDestination?.hasRoute<Screen.Scanner>() == true -> stringResource(Res.string.title_scan)
         currentDestination?.hasRoute<Screen.ScanResults>() == true -> stringResource(Res.string.title_scan_result)
+        currentDestination?.hasRoute<Screen.StoreMode>() == true -> stringResource(Res.string.title_cart)
         else -> ""
     }
 
@@ -114,6 +123,7 @@ fun App() {
                             onOpenCards = { navController.navigate(Screen.CardList) },
                             onOpenCollection = { navController.navigate(Screen.Collection) },
                             onOpenScanner = { navController.navigate(Screen.Scanner) },
+                            onOpenStoreMode = { navController.navigate(Screen.StoreMode) },
                         )
                     }
 
@@ -180,8 +190,56 @@ fun App() {
                             }
                         )
                     }
+
+                    navigation<Screen.StoreModeGraph>(startDestination = Screen.StoreMode) {
+                        composable<Screen.StoreMode> {
+                            val cartVm = navController.storeModeViewModel()
+                            CartRoute(
+                                vm = cartVm,
+                                onNavigateToScan = { navController.navigate(Screen.CartScanner) },
+                                onBack = {
+                                    navController.navigate(Screen.Home) {
+                                        popUpTo(Screen.Home) { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
+
+                        composable<Screen.CartScanner> {
+                            val cartVm = navController.storeModeViewModel()
+
+                            ScanRoute(
+                                showSnackbar = showSnackbar,
+                                onNavigateToDetail = { id ->
+                                    cartVm.dispatch(CartContract.Action.AddToCart(id))
+                                    navController.popBackStack()
+                                },
+                                onNavigateToResults = { baseId ->
+                                    navController.navigate(Screen.CartScannerResults(baseId))
+                                }
+                            )
+                        }
+
+                        composable<Screen.CartScannerResults> { backStackEntry ->
+                            val cartVm = navController.storeModeViewModel()
+                            val route = backStackEntry.toRoute<Screen.CartScannerResults>()
+                            ScanResultsRoute(
+                                baseId = route.baseId,
+                                onNavigateToDetail = { id ->
+                                    cartVm.dispatch(CartContract.Action.AddToCart(id))
+                                    navController.popBackStack<Screen.StoreMode>(inclusive = false)
+                                },
+                            )
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun NavController.storeModeViewModel(): CartViewModel {
+    val entry = remember { getBackStackEntry<Screen.StoreModeGraph>() }
+    return koinViewModel(viewModelStoreOwner = entry)
 }
